@@ -249,7 +249,7 @@ int MessageInterpreter::interpret(string in)
 		}
 	}
 
-	reply += "\"success\":" + (failed?"FALSE":"TRUE") + "}}\n";
+	reply += "\"success\":" + to_string(!failed) + "}}\n";
 
 	comms::pushTransmit(reply);
 
