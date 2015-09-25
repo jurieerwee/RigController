@@ -114,6 +114,7 @@ namespace comms {
 
 		while(!terminate && !restart)
 		{
+			 memset(buff, 0, sizeof(buff));
 			reply = read(socketComm,(void*)buff,254);
 			if(reply>0)
 			{
