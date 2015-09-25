@@ -27,10 +27,16 @@ extern queue<string> transQ;
 extern pthread_cond_t trans_cond;
 extern pthread_mutex_t trans_mut;
 
+int initComms(int port);
+void *loop(void* socketfd_);
 void* recv(void *socketComm_);
 void* trans(void *socketComm_);
 
+int pushTransmit(string in);
+string popRecv();
+
 void terminateComms();
+void restartComms();
 
 
 } /* namespace comms */
