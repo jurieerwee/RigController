@@ -23,8 +23,15 @@ public:
 	int interpret(string in);
 
 private:
+	enum stateCmd {primeCMD,waitCMD,fillTankCMD,forceFillCMD,pumpCMD,\
+		newPressureCMD,releaseHoldCMD,clearErrCMD,overrideCMD};
+	map<string,stateCmd>	instrState;
+	enum manCmd {startPumpCMD,stopPumpCMD,setPumpPercCMD,openInflowValveCMD,\
+		closeInflowValveCMD,openOutflowValveCMD,closeOutflowValveCMD,openReleaseValveCMD,closeReleaseValveCMD,disableOverrideCMD};
+	map<string,manCmd>		instrMan;
+	enum setCmd {resetCountersCMD,resetWaitStateCMD,setPressureCMD};
+	map<string,setCmd>		instrSet;
 
-	map<string,int>	instrMap;
 };
 
 #endif /* SRC_MESSAGEINTERPRETER_H_ */
