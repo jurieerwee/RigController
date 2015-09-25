@@ -120,7 +120,7 @@ int MessageInterpreter::interpret(string in)
 		}
 	}
 
-	reply += "\"success\":" + (failed?"FALSE":"TRUE") + "}}\n";
+	reply += "\"success\":" + to_string(!failed) + "}}\n";	//TODO: find a valid way to print TRUE/FALSE instread of 0 or 1
 
 	comms::pushTransmit(reply);
 
