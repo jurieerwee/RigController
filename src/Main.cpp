@@ -16,8 +16,10 @@
 #include <queue>
 #include <pthread.h>
 #include <string>
+#include <sstream>
 
 #include "Comms.h"
+#include "MessageInterpreter.h"
 
 using namespace std;
 
@@ -49,6 +51,8 @@ void * test(void* args)
 	char cmd;
 	string msg;
 
+	MessageInterpreter mi;
+
 	while(!comms::terminate)
 	{
 		cout << "\nr: readQ \nw: writeQ \nt: terminate\n";
@@ -72,6 +76,18 @@ void * test(void* args)
 			break;
 		case 't':
 			comms::terminateComms();
+			break;
+		case 'i':
+			try
+			{
+				string temp = comms::popRecv();
+				//istringstream ss(temp);
+				mi.interpret(temp);
+			}
+			catch(int e)
+			{
+				cout << "Queue is empty\n";
+			}
 			break;
 		default:
 			cout << "Invalid input\n";

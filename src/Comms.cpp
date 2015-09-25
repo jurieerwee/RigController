@@ -52,10 +52,8 @@ namespace comms {
 		serv_addr.sin_port = htons(portno);
 		int reuse = 1;
 		struct linger lin = {1,2};
-		//struct timeval tv = {1,0};
 		setsockopt(socketfd,SOL_SOCKET,SO_REUSEADDR,(char *) &reuse, sizeof(reuse));
 		setsockopt(socketfd,SOL_SOCKET,SO_LINGER,(char *) &lin, sizeof(lin));
-		//setsockopt(socketfd,SOL_SOCKET,SO_RCVTIMEO,(char *) &tv, sizeof(tv));
 		if (bind(socketfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
 		{
 			cout <<("ERROR on binding\n");
