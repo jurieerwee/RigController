@@ -31,6 +31,7 @@
 #include "Comms.h"
 #include "MessageInterpreter.h"
 #include "Logging.h"
+#include "Timers.h"
 
 
 //namespace po = boost::program_options;
@@ -50,7 +51,7 @@ int main(int argc, const char* argv[])
 	int portno = (int)strtol(argv[1],&endprt,10);
 
 	initLogger();
-
+	timers::init();
 	comms::initComms(portno);
 
 	//TODO: spawn control thread
