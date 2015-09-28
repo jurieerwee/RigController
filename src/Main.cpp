@@ -18,12 +18,29 @@
 #include <string>
 #include <sstream>
 
+#include <boost/log/trivial.hpp>
+#include <boost/log/sources/severity_feature.hpp>
+#include <boost/log/sources/severity_logger.hpp>
+#include <boost/log/sources/global_logger_storage.hpp>
+#include <boost/log/sources/record_ostream.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/utility/setup/console.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/utility/manipulators/to_log.hpp>
+
 #include "Comms.h"
 #include "MessageInterpreter.h"
+#include "Logging.h"
 
+
+//namespace po = boost::program_options;
 using namespace std;
 
+
+
 void * test(void* args);
+
+
 
  
 int main(int argc, const char* argv[])
@@ -31,6 +48,8 @@ int main(int argc, const char* argv[])
 
 	char* endprt;
 	int portno = (int)strtol(argv[1],&endprt,10);
+
+	initLogger();
 
 	comms::initComms(portno);
 
@@ -97,3 +116,5 @@ void * test(void* args)
 	return NULL;
 
 }
+
+

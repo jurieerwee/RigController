@@ -20,7 +20,7 @@ public:
 	MessageInterpreter();
 	virtual ~MessageInterpreter();
 
-	int interpret(string in);
+	int interpret(std::string in);
 
 private:
 	enum stateCmd {primeCMD,waitCMD,fillTankCMD,forceFillCMD,pumpCMD,\
