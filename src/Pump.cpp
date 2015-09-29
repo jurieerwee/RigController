@@ -37,7 +37,7 @@ bool Pump::setSpeed(int speed)
 	return true;
 }
 
-bool Pump::setSpeedPrec(double percentage)	//Percentage is a value between 0 and 1.  This covers the DAC range and does not incorporate the hardware offset and scaling
+bool Pump::setSpeedPerc(double percentage)	//Percentage is a value between 0 and 1.  This covers the DAC range and does not incorporate the hardware offset and scaling
 {
 	if(percentage>1 || percentage<0)
 		return false;

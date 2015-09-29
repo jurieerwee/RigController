@@ -36,6 +36,7 @@ private:
 	enum TankState {TRANSIENT=0,EMPTY,FULL,TANK_ERROR};
 
 	double pressThreash;	//Pressure threshold where system is considered pressurised
+	double setPressure;		//Target pressure
 
 	inline int initWait();
 	inline int initPrime1();
@@ -63,7 +64,8 @@ private:
 
 	inline bool isPressure();	//Check whether pressure is high enough
 	inline 	TankState getTank();	//Translate two tank sensors to a state
-	inline bool getReverseFlow()
+	inline bool isReverseFlow();
+	inline bool isFlow();
 };
 
 #endif /* SRC_CONTROLLER_H_ */

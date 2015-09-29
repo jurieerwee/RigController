@@ -38,7 +38,7 @@ inline int Controller::loopPrime1()
 	{
 		return 1;
 	}
-	else if(!this->getReverseFlow())
+	else if(!this->isReverseFlow())
 	{
 		this->initError();
 		return 0;
@@ -59,7 +59,7 @@ inline int Controller::loopPrime2()
 		this->initError();
 		return 0;
 	}
-	else if(!this->getReverseFlow())
+	else if(!this->isReverseFlow())
 	{
 		this->initError();
 		return 0;
@@ -76,12 +76,149 @@ inline int Controller::loopPrime2()
 	return 1;
 }
 
-inline int Controller::loopPrime3();
-inline int Controller::loopFill();
-inline int Controller::loopForceFill();
-inline int Controller::loopPumping();
-inline int Controller::loopPressureTrans();
-inline int Controller::loopPressureHold();
+inline int Controller::loopPrime3()
+{
+	if(this->getTank()==TANK_ERROR)
+	{
+		this->initError();
+		return 0;
+	}
+	else if(!this->isReverseFlow())
+	{
+		this->initError();
+		return 0;
+	}
+	//TODO:  insert pre-empt code for when wait is called earlier.
+	else if(this->getTank()==FULL)
+	{
+		this->initWait();
+	}
+
+	return 1;
+}
+inline int Controller::loopFill()
+{
+	if(this->getTank()==TANK_ERROR)
+	{
+		this->initError();
+		return 0;
+	}
+	else if(!timers::delay1)
+	{
+		return 1;
+	}
+	else if(!this->isReverseFlow())
+	{
+		this->initError();
+		return 0;
+	}
+	else if(this->getTank()==FULL)
+	{
+		this->initWait();
+	}
+
+	return 1;
+}
+
+inline int Controller::loopForceFill()
+{
+	return 1;
+}
+
+inline int Controller::loopPumping()
+{
+	if(this->getTank()==TANK_ERROR)
+	{
+		this->initError();
+		return 0;
+	}
+	else if(this->rig.getPumpErrStatus())
+	{
+		this->initError();
+		return 0;
+	}
+	else if(this->getTank()==EMPTY)
+	{
+		this->initWait();
+	}
+	else if(!timers::delay1)
+	{
+		return 1;
+	}
+	else if(!this->rig.getPumpRunning())
+	{
+		this->initError();
+		return 0;
+	}
+	else if(!this->isPressure() && !this->isFlow())
+	{
+		this->initError();
+		return 0;
+	}
+
+	return 1;
+}
+
+inline int Controller::loopPressureTrans()
+{
+	if(this->getTank()==TANK_ERROR)
+	{
+		this->initError();
+		return 0;
+	}
+	else if(this->rig.getPumpErrStatus())
+	{
+		this->initError();
+		return 0;
+	}
+	else if(this->getTank()==EMPTY)
+	{
+		this->initWait();
+	}
+	else if(!this->rig.getPumpRunning())
+	{
+		this->initError();
+		return 0;
+	}
+	else if(!this->isPressure() && !this->isFlow())
+	{
+		this->initError();
+		return 0;
+	}
+
+	//TODO:  Closed loop control
+
+	return 1;
+}
+
+inline int Controller::loopPressureHold()
+{
+	if(this->getTank()==TANK_ERROR)
+	{
+		this->initError();
+		return 0;
+	}
+	else if(this->rig.getPumpErrStatus())
+	{
+		this->initError();
+		return 0;
+	}
+	else if(this->getTank()==EMPTY)
+	{
+		this->initWait();
+	}
+	else if(!this->rig.getPumpRunning())
+	{
+		this->initError();
+		return 0;
+	}
+	else if(!this->isPressure() && !this->isFlow())
+	{
+		this->initError();
+		return 0;
+	}
+	return 1;
+}
 inline int Controller::loopOverride();
 inline int Controller::loopError();
 
@@ -373,8 +510,14 @@ inline Controller::TankState Controller::getTank()	//Translate two tank sensors 
 
 }
 
-inline bool Controller::getReverseFlow()
+inline bool Controller::isReverseFlow()
 {
 	//TODO:  Define reverse flow
 
 }
+
+inline bool Controller::isFlow()
+{
+
+}
+
