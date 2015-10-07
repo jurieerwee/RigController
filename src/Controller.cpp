@@ -23,6 +23,65 @@ Controller::~Controller() {
 	// TODO Auto-generated destructor stub
 }
 
+
+int Controller::loop()
+{
+
+
+	if(this->rig.getEmerBtn())
+	{
+		changeState(ERROR,false);
+	}
+
+	switch(this->state)
+	{
+	case IDLE:
+		this->loopIdle();
+		break;
+	case IDLE_PRES:
+		this->loopIdlePres();
+		break;
+	case PRIME1:
+		this->loopPrime1();
+		break;
+	case PRIME2:
+		this->loopPrime2();
+		break;
+	case PRIME3:
+		this->loopPrime3();
+		break;
+	case PRIME4:
+		this->loopPrime4();
+		break;
+	case FILL:
+		this->loopFill();
+		break;
+	case FORCEFILL:
+		this->loopForceFill();
+		break;
+	case PUMPING:
+		this->loopPumping();
+		break;
+	case PRESSURE_TRANS:
+		this->loopPressureTrans();
+		break;
+	case PRESSURE_HOLD:
+		this->loopPressureHold();
+		break;
+	case OVERRIDE:
+		this->loopOverride();
+		break;
+	case ERROR:
+		this->loopError();
+		break;
+	default:
+		this->changeState(ERROR,false);
+		break;
+	}
+
+	return true;
+}
+
 int Controller::changeState(State newState, bool cmd)
 {
 	switch(newState)

@@ -22,7 +22,7 @@ public:
 	Controller();
 	virtual ~Controller();
 
-
+	enum State {IDLE,IDLE_PRES,PRIME1,PRIME2,PRIME3, PRIME4,FILL,FORCEFILL,PUMPING,PRESSURE_TRANS,PRESSURE_HOLD,OVERRIDE,ERROR};
 	int loop();
 
 
@@ -31,13 +31,12 @@ private:
 	po::variables_map vm;
 	Rig rig;
 
-	enum State {IDLE,IDLE_PRES,PRIME1,PRIME2,PRIME3, PRIME4,FILL,FORCEFILL,PUMPING,PRESSURE_TRANS,PRESSURE_HOLD,OVERRIDE,ERROR};
+
 	State state = IDLE;
 	enum TankState {TRANSIENT=0,EMPTY,FULL,TANK_ERROR};
 
 	double pressThreash;	//Pressure threshold where system is considered pressurised
 	double setPressure;		//Target pressure
-
 
 	int changeState(State newState, bool cmd);
 
@@ -55,7 +54,7 @@ private:
 	inline int initOverride();
 	inline int initError();
 
-	/*inline int loopIdle();
+	inline int loopIdle();
 	inline int loopIdlePres();
 	inline int loopPrime1();
 	inline int loopPrime2();
@@ -67,7 +66,7 @@ private:
 	inline int loopPressureTrans();
 	inline int loopPressureHold();
 	inline int loopOverride();
-	inline int loopError();*/
+	inline int loopError();
 
 	inline bool isPressure();	//Check whether pressure is high enough
 	inline 	TankState getTank();	//Translate two tank sensors to a state
