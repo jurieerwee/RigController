@@ -11,6 +11,12 @@
 
 namespace timers {
 
+bool delay1 = false;	//used for 1second delay in states.
+unsigned int delay1_c = 1;
+
+bool delay30 = false; //30second delay
+unsigned int delay30_c =1;
+
 void timerHanlder(int in)
 {
 	signal(SIGALRM,SIG_IGN);
