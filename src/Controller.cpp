@@ -23,32 +23,211 @@ Controller::~Controller() {
 	// TODO Auto-generated destructor stub
 }
 
-inline int Controller::loopWait()
+int Controller::changeState(State newState, bool cmd)
+{
+	switch(newState)
+	{
+	case ERROR:
+		return initError();
+	case IDLE:
+		if ((this->state == IDLE_PRES || this->state == FILL || this->state == PRIME4 || this->state == PUMPING ||\
+				this->state == PRESSURE_TRANS || this->state == PRESSURE_HOLD ||this->state == OVERRIDE ||this->state == FORCEFILL) || \
+				(this->state == PRIME3 && !cmd) || (this->state==ERROR && !this->rig.getEmerBtn() && cmd))
+		{
+			if(!this->initIdle())
+			{
+				this->changeState(ERROR);
+				return -1;
+			}
+			return true;
+		}
+		else
+			return false;
+		break;
+
+	case IDLE_PRES:
+		if (this->state == IDLE && !cmd)
+		{
+			if(!this->initIdlePres())
+			{
+				this->changeState(ERROR);
+				return -1;
+			}
+			return true;
+		}
+		else
+			return false;
+		break;
+	case PRIME1:
+		if (this->state == IDLE_PRES && cmd)
+		{
+			if(!this->initPrime1())
+			{
+				this->changeState(ERROR);
+				return -1;
+			}
+			return true;
+		}
+		else
+			return false;
+		break;
+	case PRIME2:
+		if (this->state == PRIME1 && !cmd)
+		{
+			if(!this->initPrime2())
+			{
+				this->changeState(ERROR);
+				return -1;
+			}
+			return true;
+		}
+		else
+			return false;
+		break;
+	case PRIME3:
+		if (this->state == PRIME2 && !cmd)
+		{
+			if(!this->initPrime3())
+			{
+				this->changeState(ERROR);
+				return -1;
+			}
+			return true;
+		}
+		else
+			return false;
+		break;
+	case PRIME4:
+		if (this->state == PRIME4 && !cmd)
+		{
+			if(!this->initPrime4())
+			{
+				this->changeState(ERROR);
+				return -1;
+			}
+			return true;
+		}
+		else
+			return false;
+		break;
+	case FILL:
+		if (this->state == IDLE_PRES && cmd)
+		{
+			if(!this->initFill())
+			{
+				this->changeState(ERROR);
+				return -1;
+			}
+			return true;
+		}
+		else
+			return false;
+		break;
+	case FORCEFILL:
+		if ((this->state == IDLE_PRES || this->state ==IDLE) && cmd)
+		{
+			if(!this->initForceFill())
+			{
+				this->changeState(ERROR);
+				return -1;
+			}
+			return true;
+		}
+		else
+			return false;
+		break;
+	case PUMPING:
+		if ((this->state == IDLE_PRES || this->IDLE || this->PRESSURE_HOLD) && cmd)
+		{
+			if(!this->initPumping())
+			{
+				this->changeState(ERROR);
+				return -1;
+			}
+			return true;
+		}
+		else
+			return false;
+		break;
+	case PRESSURE_TRANS:
+		if ((this->state == PUMPING || this->PRESSURE_HOLD) && cmd)
+		{
+			if(!this->initPressureTrans())
+			{
+				this->changeState(ERROR);
+				return -1;
+			}
+			return true;
+		}
+		else
+			return false;
+		break;
+	case PRESSURE_HOLD:
+		if ((this->PRESSURE_TRANS) &&!cmd)
+		{
+			if(!this->initPumping())
+			{
+				this->changeState(ERROR);
+				return -1;
+			}
+			return true;
+		}
+		else
+			return false;
+		break;
+	case OVERRIDE:
+		if ((this->state == IDLE_PRES || this->IDLE) && cmd)
+		{
+			if(!this->initPumping())
+			{
+				this->changeState(ERROR);
+				return -1;
+			}
+			return true;
+		}
+		else
+			return false;
+		break;
+	default:
+		return false;
+
+	}
+
+	return false;
+}
+
+inline int Controller::loopIdle()
 {
 
 }
+
+inline int Controller::loopIdlePres()
+{
+
+}
+
 inline int Controller::loopPrime1()
 {
 	if(this->getTank()==TANK_ERROR)
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(!timers::delay1)
 	{
-		return 1;
+		return true;
 	}
 	else if(!this->isReverseFlow())
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else
 	{
 		this->initPrime2();
 	}
 
-	return 1;
+	return true;
 
 }
 
@@ -57,23 +236,23 @@ inline int Controller::loopPrime2()
 	if(this->getTank()==TANK_ERROR)
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(!this->isReverseFlow())
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(!timers::delay1)
 	{
-		return 1;
+		return true;
 	}
 
 	else
 	{
 		this->initPrime3();
 	}
-	return 1;
+	return true;
 }
 
 inline int Controller::loopPrime3()
@@ -81,48 +260,69 @@ inline int Controller::loopPrime3()
 	if(this->getTank()==TANK_ERROR)
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(!this->isReverseFlow())
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	//TODO:  insert pre-empt code for when wait is called earlier.
 	else if(this->getTank()==FULL)
 	{
-		this->initWait();
+		this->initIdle();
 	}
 
-	return 1;
+	return true;
+}
+
+inline int Controller::loopPrime4()
+{
+	if(this->getTank()==TANK_ERROR)
+	{
+		this->initError();
+		return false;
+	}
+	else if(!this->isReverseFlow())
+	{
+		this->initError();
+		return false;
+	}
+	//TODO:  insert pre-empt code for when wait is called earlier.
+	else if(this->getTank()==FULL)
+	{
+		this->initIdle();
+	}
+
+	return true;
 }
 inline int Controller::loopFill()
 {
 	if(this->getTank()==TANK_ERROR)
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(!timers::delay1)
 	{
-		return 1;
+		return true;
 	}
 	else if(!this->isReverseFlow())
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(this->getTank()==FULL)
 	{
-		this->initWait();
+		this->initIdle();
 	}
 
-	return 1;
+	return true;
 }
 
 inline int Controller::loopForceFill()
 {
-	return 1;
+	return true;
 }
 
 inline int Controller::loopPumping()
@@ -130,33 +330,33 @@ inline int Controller::loopPumping()
 	if(this->getTank()==TANK_ERROR)
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(this->rig.getPumpErrStatus())
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(this->getTank()==EMPTY)
 	{
-		this->initWait();
+		this->initIdle();
 	}
 	else if(!timers::delay1)
 	{
-		return 1;
+		return true;
 	}
 	else if(!this->rig.getPumpRunning())
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(!this->isPressure() && !this->isFlow())
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 
-	return 1;
+	return true;
 }
 
 inline int Controller::loopPressureTrans()
@@ -164,31 +364,31 @@ inline int Controller::loopPressureTrans()
 	if(this->getTank()==TANK_ERROR)
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(this->rig.getPumpErrStatus())
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(this->getTank()==EMPTY)
 	{
-		this->initWait();
+		this->initIdle();
 	}
 	else if(!this->rig.getPumpRunning())
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(!this->isPressure() && !this->isFlow())
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 
 	//TODO:  Closed loop control
 
-	return 1;
+	return true;
 }
 
 inline int Controller::loopPressureHold()
@@ -196,41 +396,41 @@ inline int Controller::loopPressureHold()
 	if(this->getTank()==TANK_ERROR)
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(this->rig.getPumpErrStatus())
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(this->getTank()==EMPTY)
 	{
-		this->initWait();
+		this->initIdle();
 	}
 	else if(!this->rig.getPumpRunning())
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
 	else if(!this->isPressure() && !this->isFlow())
 	{
 		this->initError();
-		return 0;
+		return false;
 	}
-	return 1;
+	return true;
 }
 inline int Controller::loopOverride();
 inline int Controller::loopError();
 
-inline int Controller::initWait()
+inline int Controller::initIdle()
 {
 	//Precondition check
-	if(!(this->state == WAIT || this->state == PRIME3 || this->state == FILL || this->state == FORCEFILL || this->state == PUMPING || this->state == PRESSURE_HOLD || this->state == OVERRIDE))
+	if(!(this->state == IDLE || this->state == PRIME3 || this->state == FILL || this->state == FORCEFILL || this->state == PUMPING || this->state == PRESSURE_HOLD || this->state == OVERRIDE))
 	{
-		return 0;	//Cannot enter
+		return false;	//Cannot enter
 	}
 
-	this->state = WAIT;
+	this->state = IDLE;
 
 	//SET STATE
 	bool success = true;
@@ -242,18 +442,43 @@ inline int Controller::initWait()
 	if(!success)
 	{
 		this->initError();
-		return -1;
+		return false;
 	}
-	return 1;
+	return true;
+}
+
+inline int Controller::initIdlePres()
+{
+	//Precondition check
+	if(!(this->state == IDLE || this->state == PRIME3 || this->state == FILL || this->state == FORCEFILL || this->state == PUMPING || this->state == PRESSURE_HOLD || this->state == OVERRIDE))
+	{
+		return false;	//Cannot enter
+	}
+
+	this->state = IDLE_PRES;
+
+	//SET STATE
+	bool success = true;
+	success &= this->rig.stopPumpOnly();
+	success &= this->rig.closeInflowValveOnly();
+	success &= this->rig.closeOutflowValveOnly();
+	success &= this->rig.closeReleaseValveOnly();
+
+	if(!success)
+	{
+		this->initError();
+		return false;
+	}
+	return true;
 }
 
 
 inline int Controller::initPrime1()
 {
 	//Precondition check
-	if(!this->isPressure() || !(this->state == WAIT || this->state == PRIME1))
+	if(!this->isPressure() || !(this->state == IDLE || this->state == PRIME1))
 	{
-		return 0;	//Cannot enter
+		return false;	//Cannot enter
 	}
 
 	this->state = PRIME1;
@@ -270,9 +495,9 @@ inline int Controller::initPrime1()
 	if(!success)
 	{
 		this->initError();
-		return -1;	//Error on enter
+		return false;	//Error on enter
 	}
-	return 1;
+	return true;
 }
 
 inline int Controller::initPrime2()
@@ -280,7 +505,7 @@ inline int Controller::initPrime2()
 	//Precondition check
 	if(!(this->state == PRIME2 || this->state == PRIME1))
 	{
-		return 0;	//Cannot enter
+		return false;	//Cannot enter
 	}
 
 	this->state = PRIME2;
@@ -297,16 +522,16 @@ inline int Controller::initPrime2()
 	if(!success)
 	{
 		this->initError();
-		return -1;	//Error on enter
+		return false;	//Error on enter
 	}
-	return 1;
+	return true;
 }
 inline int Controller::initPrime3()
 {
 	//Precondition check
 	if( !(this->state == PRIME2 || this->state == PRIME3))
 	{
-		return 0;	//Cannot enter
+		return false;	//Cannot enter
 	}
 
 	this->state = PRIME3;
@@ -322,17 +547,42 @@ inline int Controller::initPrime3()
 	if(!success)
 	{
 		this->initError();
-		return -1;	//Error on enter
+		return false;	//Error on enter
 	}
-	return 1;
+	return true;
+}
+
+inline int Controller::initPrime4()
+{
+	//Precondition check
+	if( !(this->state == PRIME4 || this->state == PRIME3))
+	{
+		return false;	//Cannot enter
+	}
+
+	this->state = PRIME4;
+	//SET STATE
+	bool success = true;
+	success &= this->rig.stopPumpOnly();
+	success &= this->rig.openInflowValveOnly();
+	success &= this->rig.openOutflowValveOnly();
+	success &= this->rig.openReleaseValveOnly();
+
+
+	if(!success)
+	{
+		this->initError();
+		return false;	//Error on enter
+	}
+	return true;
 }
 
 inline int Controller::initFill()
 {
 	//Precondition check
-	if(!this->isPressure() || !(this->state == FILL || this->state == WAIT))
+	if(!this->isPressure() || !(this->state == FILL || this->state == IDLE))
 	{
-		return 0;	//Cannot enter
+		return false;	//Cannot enter
 	}
 
 	this->state = FILL;
@@ -349,17 +599,17 @@ inline int Controller::initFill()
 	if(!success)
 	{
 		this->initError();
-		return -1;	//Error on enter
+		return false;	//Error on enter
 	}
-	return 1;
+	return true;
 }
 
 inline int Controller::initForceFill()
 {
 	//Precondition check
-	if( !(this->state == FORCEFILL || this->state == WAIT))
+	if( !(this->state == FORCEFILL || this->state == IDLE))
 	{
-		return 0;	//Cannot enter
+		return false;	//Cannot enter
 	}
 	this->state = FORCEFILL;
 		//SET STATE
@@ -371,17 +621,17 @@ inline int Controller::initForceFill()
 		if(!success)
 	{
 		this->initError();
-		return -1;	//Error on enter
+		return false;	//Error on enter
 	}
-	return 1;
+	return true;
 }
 
 inline int Controller::initPumping()
 {
 	//Precondition check
-	if(this->getTank()==EMPTY || !(this->state == PUMPING || this->state == WAIT || this->state == PRESSURE_HOLD))
+	if(this->getTank()==EMPTY || !(this->state == PUMPING || this->state == IDLE || this->state == PRESSURE_HOLD))
 	{
-		return 0;	//Cannot enter
+		return false;	//Cannot enter
 	}
 
 	this->state = PUMPING;
@@ -398,9 +648,9 @@ inline int Controller::initPumping()
 	if(!success)
 	{
 		this->initError();
-		return -1;	//Error on enter
+		return false;	//Error on enter
 	}
-	return 1;
+	return true;
 }
 
 inline int Controller::initPressureTrans()
@@ -408,7 +658,7 @@ inline int Controller::initPressureTrans()
 	//Precondition check
 	if(!(this->state == PUMPING || this->state == PRESSURE_HOLD || this->state == PRESSURE_TRANS))
 	{
-		return 0;	//Cannot enter
+		return false;	//Cannot enter
 	}
 
 	this->state = PRESSURE_TRANS;
@@ -423,9 +673,9 @@ inline int Controller::initPressureTrans()
 	if(!success)
 	{
 		this->initError();
-		return -1;	//Error on enter
+		return false;	//Error on enter
 	}
-	return 1;
+	return true;
 }
 
 inline int Controller::initPressureHold()
@@ -433,7 +683,7 @@ inline int Controller::initPressureHold()
 	//Precondition check
 	if(!(this->state == PRESSURE_HOLD || this->state == PRESSURE_TRANS))
 	{
-		return 0;	//Cannot enter
+		return false;	//Cannot enter
 	}
 
 	this->state = PRESSURE_HOLD;
@@ -448,17 +698,17 @@ inline int Controller::initPressureHold()
 	if(!success)
 	{
 		this->initError();
-		return -1;	//Error on enter
+		return false;	//Error on enter
 	}
-	return 1;
+	return true;
 }
 
 inline int Controller::initOverride()
 {
 	//Precondition check
-	if(!(this->state == OVERRIDE || this->state == WAIT))
+	if(!(this->state == OVERRIDE || this->state == IDLE))
 	{
-		return 0;	//Cannot enter
+		return false;	//Cannot enter
 	}
 
 	this->state = OVERRIDE;
@@ -473,9 +723,9 @@ inline int Controller::initOverride()
 	if(!success)
 	{
 		this->initError();
-		return -1;	//Error on enter
+		return false;	//Error on enter
 	}
-	return 1;
+	return true;
 }
 
 inline int Controller::initError()
@@ -494,9 +744,9 @@ inline int Controller::initError()
 
 	if(!success)
 	{
-		return -1;	//Error on enter
+		return false;	//Error on enter
 	}
-	return 1;
+	return true;
 }
 
 inline bool Controller::isPressure()	//Check whether pressure is high enough

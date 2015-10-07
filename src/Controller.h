@@ -31,17 +31,22 @@ private:
 	po::variables_map vm;
 	Rig rig;
 
-	enum State {WAIT,PRIME1,PRIME2,PRIME3,FILL,FORCEFILL,PUMPING,PRESSURE_TRANS,PRESSURE_HOLD,OVERRIDE,ERROR};
-	State state = WAIT;
+	enum State {IDLE,IDLE_PRES,PRIME1,PRIME2,PRIME3, PRIME4,FILL,FORCEFILL,PUMPING,PRESSURE_TRANS,PRESSURE_HOLD,OVERRIDE,ERROR};
+	State state = IDLE;
 	enum TankState {TRANSIENT=0,EMPTY,FULL,TANK_ERROR};
 
 	double pressThreash;	//Pressure threshold where system is considered pressurised
 	double setPressure;		//Target pressure
 
-	inline int initWait();
+
+	int changeState(State newState, bool cmd);
+
+	inline int initIdle();
+	inline int initIdlePres();
 	inline int initPrime1();
 	inline int initPrime2();
 	inline int initPrime3();
+	inline int initPrime4();
 	inline int initFill();
 	inline int initForceFill();
 	inline int initPumping();
@@ -50,10 +55,12 @@ private:
 	inline int initOverride();
 	inline int initError();
 
-	/*inline int loopWait();
+	/*inline int loopIdle();
+	inline int loopIdlePres();
 	inline int loopPrime1();
 	inline int loopPrime2();
 	inline int loopPrime3();
+	inline int loopPrime4();
 	inline int loopFill();
 	inline int loopForceFill();
 	inline int loopPumping();
