@@ -7,7 +7,7 @@
 
 #include "Timers.h"
 #include <unistd.h>
-#include <signal>
+#include <signal.h>
 
 namespace timers {
 
