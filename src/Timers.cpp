@@ -31,7 +31,7 @@ void timerHanlder(int in)
 void init()
 {
 	signal(SIGALRM,timerHanlder);
-	ualarm(1e6/FREQ);
+	ualarm(1e6/FREQ,1e6/FREQ);
 }
 
 int reset_delay30()
