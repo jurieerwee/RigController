@@ -16,7 +16,7 @@ namespace timers {
 	extern unsigned int delay1_c;
 
 	extern  bool delay30; //30second delay
-	extern unsigned in delay30_c;
+	extern unsigned int delay30_c;
 
 	void timerHanlder(int in);
 	void init();
