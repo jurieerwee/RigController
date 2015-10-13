@@ -14,16 +14,17 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
+#include "Controller.h"
 using namespace std;
 class MessageInterpreter {
 public:
 	MessageInterpreter();
 	virtual ~MessageInterpreter();
 
-	int interpret(std::string in);
+	int interpret(Controller &ctrl, string in);
 
 private:
-	enum stateCmd {primeCMD,waitCMD,fillTankCMD,forceFillCMD,pumpCMD,\
+	enum stateCmd {primeCMD,idleCMD,fillTankCMD,forceFillCMD,pumpCMD,\
 		newPressureCMD,releaseHoldCMD,clearErrCMD,overrideCMD};
 	map<string,stateCmd>	instrState;
 	enum manCmd {startPumpCMD,stopPumpCMD,setPumpPercCMD,openInflowValveCMD,\

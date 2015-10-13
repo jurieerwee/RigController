@@ -16,6 +16,7 @@
 #include <boost/exception/all.hpp>
 
 #include "Comms.h"
+#include "Controller.h"
 
 using namespace std;
 
@@ -24,7 +25,7 @@ using namespace std;
 MessageInterpreter::MessageInterpreter() {
 	//State commands
 	instrState.insert(pair<string,stateCmd>("prime",primeCMD));
-	instrState.insert(pair<string,stateCmd>("wait",waitCMD));
+	instrState.insert(pair<string,stateCmd>("idle",idleCMD));
 	instrState.insert(pair<string,stateCmd>("fillTank",fillTankCMD));
 	instrState.insert(pair<string,stateCmd>("forceFill",forceFillCMD));
 	instrState.insert(pair<string,stateCmd>("startPump",pumpCMD));
@@ -55,7 +56,7 @@ MessageInterpreter::~MessageInterpreter() {
 	// TODO Auto-generated destructor stub
 }
 
-int MessageInterpreter::interpret(string in)
+int MessageInterpreter::interpret(Controller &ctrl, string in)
 {
 	using boost::property_tree::ptree;
 	ptree 	pt;
@@ -90,17 +91,44 @@ int MessageInterpreter::interpret(string in)
 	}
 	else if(type.compare("stateCMD")==0)
 	{
+
+		bool aswr = -1;
 		switch(instrState[instruction])
 		{
 		case primeCMD:
-			cout << "Prime pump\n";
-			reply += "\"code\":1,";
+			aswr = ctrl.changeState(ctrl.State::PRIME1,true);
 			break;
-
+		case idleCMD:
+			aswr = ctrl.changeState(ctrl.State::IDLE,true);
+			break;
+		case fillTankCMD:
+			aswr = ctrl.changeState(ctrl.State::FILL,true);
+			break;
+		case forceFillCMD:
+			aswr = ctrl.changeState(ctrl.State::FORCEFILL,true);
+			break;
+		case pumpCMD:
+			aswr = ctrl.changeState(ctrl.State::PUMPING,true);
+			break;
+		case newPressureCMD:
+			aswr = ctrl.changeState(ctrl.State::PRESSURE_TRANS,true);
+			break;
+		case releaseHoldCMD:
+			aswr = ctrl.changeState(ctrl.State::PUMPING,true);
+			break;
+		case clearErrCMD:
+			aswr = ctrl.changeState(ctrl.State::IDLE,true);
+			break;
+		case overrideCMD:
+			aswr = ctrl.changeState(ctrl.State::OVERRIDE,true);
+			break;
 		default:
 			failed = true;
 			break;
 		}
+		reply += "\"code\":";
+		reply += to_string(aswr);
+		reply +=",";
 	}
 	else if(type.compare("manualCMD")==0)
 	{

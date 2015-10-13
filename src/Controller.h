@@ -13,9 +13,11 @@
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/variables_map.hpp>
 
+
 namespace po = boost::program_options;
 
 #include "Rig.h"
+#include "MessageInterpreter.h"
 
 class Controller {
 public:
@@ -31,6 +33,7 @@ private:
 	po::variables_map vm;
 	Rig rig;
 
+	friend MessageInterpreter mi;
 
 	State state = IDLE;
 	enum TankState {TRANSIENT=0,EMPTY,FULL,TANK_ERROR};

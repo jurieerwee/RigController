@@ -8,11 +8,17 @@
 #include "Controller.h"
 #include "Rig.h"
 #include "Timers.h"
+#include "Comms.h"
+#include "MessageInterpreter.h"
+
+#include <string>
 
 #include <boost/program_options.hpp>
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/variables_map.hpp>
+
+using namespace std;
 
 Controller::Controller() : rig((this->vm)) {
 	// TODO Auto-generated constructor stub
@@ -31,6 +37,19 @@ int Controller::loop()
 	if(this->rig.getEmerBtn())
 	{
 		changeState(ERROR,false);
+	}
+
+	//TODO: Fetch and decode instructions from Q
+	string cmd;
+	try
+	{
+		cmd = comms::popRecv();
+		this->mi.interpret(this,cmd);
+	}
+	catch(int e)
+	{
+		if(0!=e)
+			throw e;
 	}
 
 	switch(this->state)

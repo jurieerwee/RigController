@@ -22,10 +22,10 @@ namespace comms {
 
 extern volatile bool terminate;
 extern volatile bool restart;
-extern queue<string> recvQ;
-extern queue<string> transQ;
-extern pthread_cond_t trans_cond;
-extern pthread_mutex_t trans_mut;
+//extern queue<string> recvQ;
+//extern queue<string> transQ;
+//extern pthread_cond_t trans_cond;
+//extern pthread_mutex_t trans_mut;
 
 int initComms(int port);
 void *loop(void* socketfd_);
