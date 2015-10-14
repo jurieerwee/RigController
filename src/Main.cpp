@@ -32,6 +32,7 @@
 #include "MessageInterpreter.h"
 #include "Logging.h"
 #include "Timers.h"
+#include "Controller.h"
 
 
 //namespace po = boost::program_options;

@@ -40,17 +40,18 @@ int Controller::loop()
 	}
 
 	//TODO: Fetch and decode instructions from Q
-	string cmd;
 	try
 	{
-		cmd = comms::popRecv();
-		this->mi.interpret(this,cmd);
+		this->mi.interpret(this);
 	}
 	catch(int e)
 	{
 		if(0!=e)
 			throw e;
 	}
+
+	if(this->rig.getPumpSpeed()!=this->setPercentage)	//If desired set percentage changed, change pump speed
+		this->rig.setPumpSpeed(this->setPercentage);
 
 	switch(this->state)
 	{
@@ -712,6 +713,19 @@ inline bool Controller::isReverseFlow()
 
 inline bool Controller::isFlow()
 {
+	//Todo:
+}
 
+inline int Controller::setDesiredPumpPerc(double in)
+{
+	if(this->state != PRESSURE_TRANS && this->state != PRESSURE_HOLD && in<=1. && in>=0)
+	{
+		this->setPercentage = in;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 

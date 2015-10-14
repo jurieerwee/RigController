@@ -21,16 +21,16 @@ public:
 	MessageInterpreter();
 	virtual ~MessageInterpreter();
 
-	int interpret(Controller &ctrl, string in);
+	int interpret(Controller *ctrlPtr);
 
 private:
 	enum stateCmd {primeCMD,idleCMD,fillTankCMD,forceFillCMD,pumpCMD,\
-		newPressureCMD,releaseHoldCMD,clearErrCMD,overrideCMD};
+		newPressureCMD,releaseHoldCMD,clearErrCMD,overrideCMD,disableOverrideCMD};
 	map<string,stateCmd>	instrState;
-	enum manCmd {startPumpCMD,stopPumpCMD,setPumpPercCMD,openInflowValveCMD,\
-		closeInflowValveCMD,openOutflowValveCMD,closeOutflowValveCMD,openReleaseValveCMD,closeReleaseValveCMD,disableOverrideCMD};
+	enum manCmd {startPumpCMD,stopPumpCMD,openInflowValveCMD,\
+		closeInflowValveCMD,openOutflowValveCMD,closeOutflowValveCMD,openReleaseValveCMD,closeReleaseValveCMD};
 	map<string,manCmd>		instrMan;
-	enum setCmd {resetCountersCMD,resetWaitStateCMD,setPressureCMD};
+	enum setCmd {resetCountersCMD,setPumpPercCMD,setPressureCMD};
 	map<string,setCmd>		instrSet;
 
 };

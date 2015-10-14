@@ -33,15 +33,18 @@ private:
 	po::variables_map vm;
 	Rig rig;
 
-	friend MessageInterpreter mi;
+	friend class MessageInterpreter;
+	MessageInterpreter mi;
 
 	State state = IDLE;
 	enum TankState {TRANSIENT=0,EMPTY,FULL,TANK_ERROR};
 
 	double pressThreash;	//Pressure threshold where system is considered pressurised
-	double setPressure;		//Target pressure
+	double setPressure =0;		//Target pressure
+	double setPercentage =0;	//Desired pump percentage
 
 	int changeState(State newState, bool cmd);
+	inline int setDesiredPumpPerc(double in);
 
 	inline int initIdle();
 	inline int initIdlePres();
