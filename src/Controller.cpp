@@ -18,9 +18,11 @@
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/variables_map.hpp>
 
+namespace po = boost::program_options;
+
 using namespace std;
 
-Controller::Controller() : rig((this->vm)) {
+Controller::Controller(po::variables_map& vm_) : rig((vm_)) {
 	// TODO Auto-generated constructor stub
 
 }

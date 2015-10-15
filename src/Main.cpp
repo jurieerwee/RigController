@@ -33,6 +33,7 @@
 #include "MessageInterpreter.h"
 #include "Logging.h"
 #include "Timers.h"
+#include "Options.h"
 
 
 
@@ -52,13 +53,16 @@ int main(int argc, const char* argv[])
 	char* endprt;
 	int portno = (int)strtol(argv[1],&endprt,10);
 
+	Options opt;
+	opt.initOptions();
+
 	initLogger();
 	timers::init();
 	comms::initComms(portno);
 
 	//TODO: spawn control thread
 	pthread_t ctrl;
-	pthread_create(&ctrl,NULL,&ctrlThread,NULL);
+	pthread_create(&ctrl,NULL,&ctrlThread,(void *)(&opt.getVM()));
 
 	comms::loop(&portno);	//spawns and joins threads also.
 
@@ -121,11 +125,11 @@ int main(int argc, const char* argv[])
 
 }*/
 
-void *ctrlThread(void* args)
+void *ctrlThread(void* vm_)
 {
-
+	po::variables_map& vm = *(po::variables_map*)(vm_);
 	MessageInterpreter mi;
-	Controller ctrler;
+	Controller ctrler(vm);
 	bool terminate = false;
 
 	while(!terminate)

@@ -23,7 +23,7 @@ void *ctrlThread();
 
 class Controller {
 public:
-	Controller();
+	Controller(po::variables_map& vm_);
 	virtual ~Controller();
 
 	enum State {IDLE,IDLE_PRES,PRIME1,PRIME2,PRIME3, PRIME4,FILL,FORCEFILL,PUMPING,PRESSURE_TRANS,PRESSURE_HOLD,OVERRIDE,ERROR,TERMINATE};
