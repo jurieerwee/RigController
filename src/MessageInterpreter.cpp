@@ -22,7 +22,6 @@
 using namespace std;
 
 
-class Controller;
 
 MessageInterpreter::MessageInterpreter() {
 	//State commands
@@ -36,6 +35,7 @@ MessageInterpreter::MessageInterpreter() {
 	instrState.insert(pair<string,stateCmd>("clearErr",clearErrCMD));
 	instrState.insert(pair<string,stateCmd>("override",overrideCMD));
 	instrState.insert(pair<string,stateCmd>("disableOverride",disableOverrideCMD));
+	instrState.insert(pair<string,stateCmd>("terminate",terminateCMD));
 	//Munual commands
 	instrMan.insert(pair<string,manCmd>("startPump",startPumpCMD));
 	instrMan.insert(pair<string,manCmd>("stopPump",stopPumpCMD));
@@ -72,6 +72,7 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 
 	istringstream ss(in);
 	bool failed = false;
+	bool terminate = false;
 
 	try{
 		read_json(ss,pt);
@@ -133,6 +134,17 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 		case disableOverrideCMD:
 			aswr = ctrl.changeState(ctrl.State::IDLE,true);
 			break;
+		case terminateCMD:
+			if(ctrl.state == ctrl.State::IDLE || ctrl.state == ctrl.State::IDLE_PRES)
+			{
+				aswr = true;
+				terminate = true;
+			}
+			else
+			{
+				aswr = false;
+			}
+			break;
 		default:
 			failed = true;
 			break;
@@ -189,21 +201,26 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 	else if(type.compare("setCMD")==0)
 	{
 		bool aswr = false;
-		switch(instrSet[instruction])
+		try{
+			switch(instrSet[instruction])
+			{
+			case setPumpPercCMD:
+				aswr = ctrl.setDesiredPumpPerc(pt.get<double>("msg.percentage"));
+				break;
+			case setPressureCMD:
+				aswr = true;
+				ctrl.setPressure = pt.get<double>("msg.pressure");
+				break;
+			case resetCountersCMD:
+				aswr = ctrl.rig.resetFlowMeasuring();
+				break;
+			default:
+				failed = true;
+				break;
+			}
+		}catch(boost::exception &e)
 		{
-		case setPumpPercCMD:
-			aswr = ctrl.setDesiredPumpPerc(pt.get<double>("msg.percentage"));
-			break;
-		case setPressureCMD:
-			aswr = true;
-			ctrl.setPressure = pt.get<double>("msg.pressure");
-			break;
-		case resetCountersCMD:
-			aswr = ctrl.rig.resetFlowMeasuring();
-			break;
-		default:
 			failed = true;
-			break;
 		}
 		reply += "\"code\":";
 		reply += to_string(aswr);
@@ -215,5 +232,5 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 	comms::pushTransmit(reply);
 
 
-	return 1;
+	return terminate?2:1;
 }

@@ -9,7 +9,7 @@
 #include "Rig.h"
 #include "Timers.h"
 #include "Comms.h"
-#include "MessageInterpreter.h"
+//#include "MessageInterpreter.h"
 
 #include <string>
 
@@ -30,25 +30,17 @@ Controller::~Controller() {
 }
 
 
+
+
 int Controller::loop()
 {
-
+	//Note: Interpret called in ctrlTread loop.  This avoids circular dependence.
 
 	if(this->rig.getEmerBtn())
 	{
 		changeState(ERROR,false);
 	}
 
-	//TODO: Fetch and decode instructions from Q
-	try
-	{
-		this->mi.interpret(this);
-	}
-	catch(int e)
-	{
-		if(0!=e)
-			throw e;
-	}
 
 	if(this->rig.getPumpSpeed()!=this->setPercentage)	//If desired set percentage changed, change pump speed
 		this->rig.setPumpSpeed(this->setPercentage);
@@ -707,16 +699,15 @@ inline Controller::TankState Controller::getTank()	//Translate two tank sensors 
 
 inline bool Controller::isReverseFlow()
 {
-	//TODO:  Define reverse flow
-
+	return (this->rig.getFlowMeasure()>0 && !this->rig.getSensor_FlowDirection());
 }
 
 inline bool Controller::isFlow()
 {
-	//Todo:
+	return this->rig.getFlowMeasure() >0;
 }
 
-inline int Controller::setDesiredPumpPerc(double in)
+int Controller::setDesiredPumpPerc(double in)
 {
 	if(this->state != PRESSURE_TRANS && this->state != PRESSURE_HOLD && in<=1. && in>=0)
 	{

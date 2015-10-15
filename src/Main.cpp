@@ -29,10 +29,11 @@
 #include <boost/log/utility/manipulators/to_log.hpp>
 
 #include "Comms.h"
+#include "Controller.h"
 #include "MessageInterpreter.h"
 #include "Logging.h"
 #include "Timers.h"
-#include "Controller.h"
+
 
 
 //namespace po = boost::program_options;
@@ -41,7 +42,7 @@ using namespace std;
 
 
 void * test(void* args);
-
+void *ctrlThread(void* args);
 
 
  
@@ -57,17 +58,18 @@ int main(int argc, const char* argv[])
 
 	//TODO: spawn control thread
 	pthread_t ctrl;
-	pthread_create(&ctrl,NULL,&test,NULL);
+	pthread_create(&ctrl,NULL,&ctrlThread,NULL);
 
-	comms::loop(&portno);
+	comms::loop(&portno);	//spawns and joins threads also.
 
 	//Join control tread
+	pthread_join(ctrl,NULL);
 
 	exit(0);
 }
 
 
-void * test(void* args)
+/*void * test(void* args)
 {
 	char cmd;
 	string msg;
@@ -117,6 +119,30 @@ void * test(void* args)
 	}
 	return NULL;
 
+}*/
+
+void *ctrlThread(void* args)
+{
+
+	MessageInterpreter mi;
+	Controller ctrler;
+	bool terminate = false;
+
+	while(!terminate)
+	{
+		ctrler.loop();
+		try
+		{
+			terminate = (mi.interpret(&ctrler)==2);
+		}
+		catch(int e)
+		{
+			if(0!=e)
+				throw e;
+		}
+	}
+	comms::terminateComms();
+	return NULL;
 }
 
 

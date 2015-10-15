@@ -17,24 +17,25 @@
 namespace po = boost::program_options;
 
 #include "Rig.h"
-#include "MessageInterpreter.h"
+//#include "MessageInterpreter.h"
+
+void *ctrlThread();
 
 class Controller {
 public:
 	Controller();
 	virtual ~Controller();
 
-	enum State {IDLE,IDLE_PRES,PRIME1,PRIME2,PRIME3, PRIME4,FILL,FORCEFILL,PUMPING,PRESSURE_TRANS,PRESSURE_HOLD,OVERRIDE,ERROR};
+	enum State {IDLE,IDLE_PRES,PRIME1,PRIME2,PRIME3, PRIME4,FILL,FORCEFILL,PUMPING,PRESSURE_TRANS,PRESSURE_HOLD,OVERRIDE,ERROR,TERMINATE};
 	int loop();
 
 
 
 private:
+	friend class MessageInterpreter;
+
 	po::variables_map vm;
 	Rig rig;
-
-	friend class MessageInterpreter;
-	MessageInterpreter mi;
 
 	State state = IDLE;
 	enum TankState {TRANSIENT=0,EMPTY,FULL,TANK_ERROR};
@@ -44,7 +45,7 @@ private:
 	double setPercentage =0;	//Desired pump percentage
 
 	int changeState(State newState, bool cmd);
-	inline int setDesiredPumpPerc(double in);
+	int setDesiredPumpPerc(double in);
 
 	inline int initIdle();
 	inline int initIdlePres();
