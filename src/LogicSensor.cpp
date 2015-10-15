@@ -30,9 +30,11 @@ bool LogicSensor::update()
 	return true;
 }
 
-bool LogicSensor::getState()	//If N.O., then pin high returns true, else false.
+bool LogicSensor::getState()
 {
-	return this->isHigh == this->nopen;
+	//return this->isHigh == this->nopen;
+	return (this->nopen xor (this->getHigh()==this->pullUp));
+
 }
 
 bool LogicSensor::getHigh()	//Returns sensors true state
