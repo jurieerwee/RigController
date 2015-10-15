@@ -109,10 +109,12 @@ namespace comms {
 		int socketComm = *(int*)(socketComm_);
 		int reply = 0;
 		char buff[255];
-
+#ifdef DEBUG
+				cout << "Receive thread started\n";
+#endif
 		while(!terminate && !restart)
 		{
-			 memset(buff, 0, sizeof(buff));
+			memset(buff, 0, sizeof(buff));
 			reply = read(socketComm,(void*)buff,254);
 			if(reply>0)
 			{
@@ -120,6 +122,9 @@ namespace comms {
 				pthread_mutex_lock(&recv_mut);
 				recvQ.push(temp);
 				pthread_mutex_unlock(&recv_mut);
+#ifdef DEBUG
+				cout << "Msg added to recvQ\n";
+#endif
 			}
 			else if(reply==0 || reply==-1)
 			{
@@ -135,6 +140,9 @@ namespace comms {
 				return NULL;
 			}
 		}
+#ifdef DEBUG
+				cout << "Receive thread ending\n";
+#endif
 
 		return NULL;
 	}

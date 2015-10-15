@@ -17,6 +17,7 @@
 #include <pthread.h>
 #include <string>
 #include <sstream>
+#include <wiringPi.h>
 
 #include <boost/log/trivial.hpp>
 #include <boost/log/sources/severity_feature.hpp>
@@ -34,6 +35,7 @@
 #include "Logging.h"
 #include "Timers.h"
 #include "Options.h"
+
 
 
 
@@ -127,6 +129,7 @@ int main(int argc, const char* argv[])
 
 void *ctrlThread(void* vm_)
 {
+	wiringPiSetup();
 	po::variables_map& vm = *(po::variables_map*)(vm_);
 	MessageInterpreter mi;
 	Controller ctrler(vm);

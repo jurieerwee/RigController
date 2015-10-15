@@ -22,7 +22,7 @@ namespace po = boost::program_options;
 
 using namespace std;
 
-Controller::Controller(po::variables_map& vm_) : rig((vm_)) {
+Controller::Controller(po::variables_map& vm_) : rig((vm_)) , pressThreash(100) {
 	// TODO Auto-generated constructor stub
 
 }
@@ -721,4 +721,5 @@ int Controller::setDesiredPumpPerc(double in)
 		return false;
 	}
 }
+
 
