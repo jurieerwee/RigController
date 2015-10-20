@@ -17,6 +17,9 @@ unsigned int delay1_c = 1;
 bool delay30 = false; //30second delay
 unsigned int delay30_c =1;
 
+bool sendUpdate = false;
+unsigned int sendUpdate_c = 1;
+
 void timerHanlder(int in)
 {
 	signal(SIGALRM,SIG_IGN);
@@ -31,6 +34,12 @@ void timerHanlder(int in)
 		delay30_c = 30*FREQ;
 		delay30 = true;
 	}
+
+	if(--sendUpdate_c==0)
+	{
+		sendUpdate_c = (int)0.5*FREQ;
+		sendUpdate = true;
+	}
 	signal(SIGALRM,timerHanlder);
 }
 
@@ -42,17 +51,25 @@ void init()
 
 int reset_delay30()
 {
-	int old = delay30;
-	delay30 = 30*FREQ;
+	int old = delay30_c;
+	delay30_c = 30*FREQ;
 	delay30 = false;
 	return old;
 }
 
 int reset_delay1()
 {
-	int old = delay1;
-	delay1 = 1*FREQ;
+	int old = delay1_c;
+	delay1_c = 1*FREQ;
 	delay1 = false;
+	return old;
+}
+
+int reset_sendUpdate()
+{
+	int old = sendUpdate_c;
+	sendUpdate_c = (int)(0.5*FREQ);
+	sendUpdate = false;
 	return old;
 }
 

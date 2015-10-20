@@ -17,6 +17,7 @@
 #include "MessageInterpreter.h"
 #include "Controller.h"
 #include "Comms.h"
+#include "Timers.h"
 
 
 using namespace std;
@@ -49,12 +50,58 @@ MessageInterpreter::MessageInterpreter() {
 	instrSet.insert(pair<string,setCmd>("resetCounters",resetCountersCMD));
 	instrSet.insert(pair<string,setCmd>("setPressure",setPressureCMD));
 	instrSet.insert(pair<string,setCmd>("setPumpPerc",setPumpPercCMD));
-
-
+	instrSet.insert(pair<string,setCmd>("activateUpdate",activateUpdateCMD));
+	//State to string
+	stateString.insert(pair<Controller::State,string>(Controller::State::IDLE,"IDLE"));
+	stateString.insert(pair<Controller::State,string>(Controller::State::IDLE_PRES,"IDLE_PRES"));
+	stateString.insert(pair<Controller::State,string>(Controller::State::PRIME1,"PRIME1"));
+	stateString.insert(pair<Controller::State,string>(Controller::State::PRIME2,"PRIME2"));
+	stateString.insert(pair<Controller::State,string>(Controller::State::PRIME3,"PRIME3"));
+	stateString.insert(pair<Controller::State,string>(Controller::State::PRIME4,"PRIME4"));
+	stateString.insert(pair<Controller::State,string>(Controller::State::FILL,"FILL"));
+	stateString.insert(pair<Controller::State,string>(Controller::State::FORCEFILL,"FORCEFILL"));
+	stateString.insert(pair<Controller::State,string>(Controller::State::PUMPING,"PUMPING"));
+	stateString.insert(pair<Controller::State,string>(Controller::State::PRESSURE_TRANS,"PRESSURE_TRANS"));
+	stateString.insert(pair<Controller::State,string>(Controller::State::PRESSURE_HOLD,"PRESSURE_HOLD"));
+	stateString.insert(pair<Controller::State,string>(Controller::State::OVERRIDE,"OVERRIDE"));
+	stateString.insert(pair<Controller::State,string>(Controller::State::ERROR,"ERROR"));
+	//Pump state to string
+	tankString.insert(pair<Controller::TankState,string>(Controller::TankState::EMPTY,"EMPTY"));
+	tankString.insert(pair<Controller::TankState,string>(Controller::TankState::TANK_ERROR,"TANK_ERROR"));
+	tankString.insert(pair<Controller::TankState,string>(Controller::TankState::FULL,"FULL"));
+	tankString.insert(pair<Controller::TankState,string>(Controller::TankState::TRANSIENT,"TRANSIENT"));
 }
 
 MessageInterpreter::~MessageInterpreter() {
 	// TODO Auto-generated destructor stub
+}
+
+inline string boolToString(bool in)
+{
+	return in?"true":"false";
+}
+
+int MessageInterpreter::sendStatus(Controller *ctrlPtr)
+{
+	if(!this->sendActive || !timers::sendUpdate)
+		return false;
+
+	timers::sendUpdate = false;
+	Controller &ctrl = *ctrlPtr;
+	string msg;
+
+	msg = "{\"update\":{\"status\":";
+/*	msg += "{\"state\":\"" + stateString[ctrl.state] + "\",\"tank\":\"" + tankString[ctrl.getTank()] + "\",inflowValve\":" + boolToString(ctrl.rig.getInflowValve()) \
+			+ "\",outflowValve\":" + boolToString(ctrl.rig.getOutflowValve()) + "\",releaseValve\":" + boolToString(ctrl.rig.getReleaseValve()) \
+			+ "\",pumpRunning\":" + boolToString(ctrl.rig.getPumpRunning()) + "\",pumpError\":" + boolToString(ctrl.rig.getPumpErrStatus()) \
+			+ "\",pressurised\":" + boolToString(ctrl.isPressure()) + "\",forwardFlow\":" + boolToString(ctrl.isFlow())  + "\",reverseFlow\":" + boolToString(ctrl.isReverseFlow()) + "}";
+	msg += ",\"runningData\":{\"flowRate\":"+  to_string(ctrl.rig.getFlowMeasure()) + ",\"flowDir\":" + boolToString(ctrl.rig.getSensor_FlowDirection()) \
+			+ "\"pressure\":" + to_string(ctrl.rig.getSensor_Pressure()) + "}";
+	msg += ",\"setData\":{\"flowRate\":" + to_string(ctrl.rig.getFlowCounter()) + ", \"pressure\":" + to_string(ctrl.rig.getSensor_Pressure()) + "}}}";
+*/
+	comms::pushTransmit(msg);
+
+	return true;
 }
 
 int MessageInterpreter::interpret(Controller *ctrlPtr)
@@ -213,6 +260,10 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 				break;
 			case resetCountersCMD:
 				aswr = ctrl.rig.resetFlowMeasuring();
+				break;
+			case activateUpdateCMD:
+				this->sendActive = true;
+				aswr = true;
 				break;
 			default:
 				failed = true;

@@ -22,6 +22,7 @@ public:
 	virtual ~MessageInterpreter();
 
 	int interpret(Controller *ctrlPtr);
+	int sendStatus(Controller *ctrlPtr);
 
 private:
 	enum stateCmd {primeCMD,idleCMD,fillTankCMD,forceFillCMD,pumpCMD,\
@@ -30,9 +31,12 @@ private:
 	enum manCmd {startPumpCMD,stopPumpCMD,openInflowValveCMD,\
 		closeInflowValveCMD,openOutflowValveCMD,closeOutflowValveCMD,openReleaseValveCMD,closeReleaseValveCMD};
 	map<string,manCmd>		instrMan;
-	enum setCmd {resetCountersCMD,setPumpPercCMD,setPressureCMD};
+	enum setCmd {resetCountersCMD,setPumpPercCMD,setPressureCMD,activateUpdateCMD};
 	map<string,setCmd>		instrSet;
+	map<Controller::State,string> stateString;
+	map<Controller::TankState,string> tankString;
 
+	bool sendActive = false;
 };
 
 #endif /* SRC_MESSAGEINTERPRETER_H_ */

@@ -201,6 +201,22 @@ bool Rig::getPumpErrStatus()
 	return this->pump.getPumpErrStatus();
 }
 
+
+bool Rig::getInflowValve()
+{
+	return this->inflowValve.getState();
+}
+
+bool Rig::getOutflowValve()
+{
+	return this->outflowValve.getState();
+}
+
+bool Rig::getReleaseValve()
+{
+	return this->releaseValve.getState();
+}
+
 bool Rig::getSensor_FullTank()	//True if full, false if not full
 {
 	return this->tankFullSensor.getState();

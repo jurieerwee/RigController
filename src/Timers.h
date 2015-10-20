@@ -13,15 +13,16 @@
 namespace timers {
 
 	extern bool delay1;	//used for 1second delay in states.
-	extern unsigned int delay1_c;
 
 	extern  bool delay30; //30second delay
-	extern unsigned int delay30_c;
+
+	extern bool sendUpdate;
 
 	void timerHanlder(int in);
 	void init();
 	int reset_delay30();
 	int reset_delay1();
+	int reset_sendUpdate();
 
 
 } /* namespace timers */

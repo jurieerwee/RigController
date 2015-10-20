@@ -137,6 +137,7 @@ void *ctrlThread(void* vm_)
 	cout << "Control thread started\n";
 	while(!terminate)
 	{
+		mi.sendStatus(&ctrler);
 		ctrler.loop();
 		try
 		{
@@ -148,6 +149,7 @@ void *ctrlThread(void* vm_)
 			if(0!=e)
 				throw e;
 		}
+
 	}
 	comms::terminateComms();
 	return NULL;

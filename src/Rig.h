@@ -49,6 +49,10 @@ public:
 	bool closeReleaseValveOnly();
 	bool setPumpSpeed(double percentage); //Set pump speed as percentage of fullspeed
 	
+	bool getInflowValve();
+	bool getOutflowValve();
+	bool getReleaseValve();
+
 	//Set parameters
 	int setFullSpeed(int rpm);
 	//Get paramenters
