@@ -201,6 +201,7 @@ namespace comms {
 		transQ.push(in);
 		pthread_mutex_unlock(&trans_mut);
 		pthread_cond_signal(&comms::trans_cond);
+		cout << "Transmit msg pushed\n";
 		return 1;
 	}
 

@@ -69,6 +69,10 @@ public:
 	double getLastFlow(int n);	//Returns the flow average of last n pulses in liters/minute
 	bool getEmerBtn();	//True if emergency.
 
+	//Used for testing purposes only
+	bool overridePressure();
+	bool setOverridePressure(double pressure);
+
 	//bool shutdown();  //STOP ALL
 	
 private:
@@ -87,6 +91,10 @@ private:
 	const int	pressureCh;	//Channel of the ADC corresponding to Pressure
 	FlowMeter	flow1;
 	LogicSensor emerBtn;	//Emergency button
+
+	//Used for testing purposes only
+	double testerPressure;
+	bool pressureOverride = false;
 
 };
 

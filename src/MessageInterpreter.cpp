@@ -226,6 +226,13 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 		reply += to_string(aswr);
 		reply +=",";
 	}
+	else if(type.compare("tester")==0)
+	{
+		if(instruction.compare("setPressureCMD"))
+		{
+
+		}
+	}
 
 	reply += "\"success\":" + to_string(!failed) + "}}\n";	//TODO: find a valid way to print TRUE/FALSE instread of 0 or 1
 

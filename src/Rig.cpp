@@ -242,8 +242,10 @@ double Rig::getLastFlow(int n)	//Returns the flow average of last n pulses in li
 double Rig::getSensor_Pressure() //Returns pressure transducer reading in standard measure.  TODO: Units to be confirmed
 {
 	//NBNB: Not that with current setup, this instruction will return the previous conversion and triggers the next.
-	return this->analogIn.readChannel(this->pressureCh);
-
+	if(!this->pressureOverride)	//Code added to allow for pressure override for testing purposes
+		return this->analogIn.readChannel(this->pressureCh);
+	else
+		return this->testerPressure;
 }
 
 bool Rig::getEmerBtn()	//Returns emergency button's state.  Always does an update.
@@ -275,5 +277,17 @@ bool Rig::forceSensorUpdate()
 	this->tankFullSensor.update();
 	this->pump.statusUpdate();
 
+	return true;
+}
+
+//Used for testing purposes only
+bool Rig::overridePressure()
+{
+	this->pressureOverride = true;
+	return true;
+}
+bool Rig::setOverridePressure(double pressure)
+{
+	this->testerPressure = pressure;
 	return true;
 }

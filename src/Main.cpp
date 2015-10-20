@@ -134,13 +134,14 @@ void *ctrlThread(void* vm_)
 	MessageInterpreter mi;
 	Controller ctrler(vm);
 	bool terminate = false;
-
+	cout << "Control thread started\n";
 	while(!terminate)
 	{
 		ctrler.loop();
 		try
 		{
 			terminate = (mi.interpret(&ctrler)==2);
+			cout << "Interpreting msg\n";
 		}
 		catch(int e)
 		{
