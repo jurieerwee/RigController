@@ -134,12 +134,12 @@ void FlowInst::flowInterrupt(void)
 
 void FlowInst::dirInterruptRise(void)
 {
-	FlowInst::dir = true;
+	FlowInst::dir = false;
 }
 
 void FlowInst::dirInterruptFall(void)
 {
-	FlowInst::dir = false;
+	FlowInst::dir = true;
 }
 
 struct timespec FlowInst::diff(struct timespec start, struct timespec end)
