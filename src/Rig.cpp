@@ -36,7 +36,7 @@ using namespace std;
 Rig::Rig(po::variables_map &vm) : tankFullSensor(vm["tankFullPin"].as<int>(),true,true,vm["tankFullNO"].as<int>()), tankEmptySensor(vm["tankEmptyPin"].as<int>(),true,true,vm["tankEmptyNO"].as<int>()), pump(vm["pumpFullSpeed"].as<int>(),vm["dacID"].as<int>(),vm["startPin"].as<int>(),vm["runningPin"].as<int>(),vm["errStatusPin"].as<int>()), lg(my_logger::get()),\
 		inflowValve(vm["inflowValvePin"].as<int>(),false), outflowValve(vm["outflowValvePin"].as<int>(),false), analogIn(vm["adcID"].as<int>()), pressureCh(vm["pressureCh"].as<int>()),\
 		flow1(vm["flow1Pin"].as<int>(),vm["flow1dirPin"].as<int>(), vm["flow1Pull"].as<bool>(), vm["flow1PullUp"].as<bool>(),vm["flow1Factor"].as<double>(),vm["flow1RunLength"].as<int>()),\
-		releaseValve(vm["releaseValvePin"].as<int>(),false), emerBtn(vm["emergencyBtnPin"].as<int>(), vm["emergencyBtnPull"].as<bool>(), vm["emergencyBtnPullUp"].as<bool>(), vm["emergencyBtnNO"].as<bool>())
+		releaseValve(vm["releaseValvePin"].as<int>(),false), emerBtn(vm["emergencyBtnPin"].as<int>(), vm["emergencyBtnPull"].as<bool>(), vm["emergencyBtnPullUp"].as<bool>(), vm["emergencyBtnNO"].as<bool>()), pressureOverride(false)
 {
 	this->fullSpeed = vm["pumpFullSpeed"].as<int>();
 	analogIn.setScale(this->pressureCh, vm["pressureOffset"].as<double>(), vm["pressureScale"].as<double>());

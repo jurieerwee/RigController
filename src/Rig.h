@@ -98,7 +98,7 @@ private:
 
 	//Used for testing purposes only
 	double testerPressure;
-	bool pressureOverride = false;
+	bool pressureOverride;
 
 };
 

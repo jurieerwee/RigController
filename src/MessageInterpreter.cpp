@@ -51,6 +51,7 @@ MessageInterpreter::MessageInterpreter() {
 	instrSet.insert(pair<string,setCmd>("setPressure",setPressureCMD));
 	instrSet.insert(pair<string,setCmd>("setPumpPerc",setPumpPercCMD));
 	instrSet.insert(pair<string,setCmd>("activateUpdate",activateUpdateCMD));
+
 	//State to string
 	stateString.insert(pair<Controller::State,string>(Controller::State::IDLE,"IDLE"));
 	stateString.insert(pair<Controller::State,string>(Controller::State::IDLE_PRES,"IDLE_PRES"));
@@ -277,12 +278,28 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 		reply += to_string(aswr);
 		reply +=",";
 	}
-	else if(type.compare("tester")==0)
+	else if(type.compare("testerCMD")==0)
 	{
-		if(instruction.compare("setPressureCMD"))
+		bool aswr = false;
+		if(instruction.compare("setPressureCMD")==0)
 		{
-
+			aswr = ctrl.rig.setOverridePressure(pt.get<double>("msg.pressure"));
 		}
+		else if(instruction.compare("activatePressureOverrideCMD")==0)
+		{
+			aswr = ctrl.rig.overridePressure();
+		}
+		else
+		{
+			failed = true;
+		}
+		reply += "\"code\":";
+		reply += to_string(aswr);
+		reply +=",";
+	}
+	else
+	{
+		failed = true;
 	}
 
 	reply += "\"success\":" + to_string(!failed) + "}}\n";	//TODO: find a valid way to print TRUE/FALSE instread of 0 or 1
