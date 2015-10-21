@@ -22,7 +22,7 @@ namespace po = boost::program_options;
 
 using namespace std;
 
-Controller::Controller(po::variables_map& vm_) : rig((vm_)) , pressThreash(vm["pressureThreashold"].as<double>()) {
+Controller::Controller(po::variables_map& vm_) : rig((vm_)) , pressThreash(vm_["pressureThreshold"].as<double>()) {
 	// TODO Auto-generated constructor stub
 
 }
