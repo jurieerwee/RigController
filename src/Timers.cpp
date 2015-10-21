@@ -8,6 +8,8 @@
 #include "Timers.h"
 #include <unistd.h>
 #include <signal.h>
+#include <iostream>
+#include <stdio.h>
 
 namespace timers {
 
@@ -37,7 +39,7 @@ void timerHanlder(int in)
 
 	if(--sendUpdate_c==0)
 	{
-		sendUpdate_c = (int)0.5*FREQ;
+		sendUpdate_c = (int)(0.5*FREQ);
 		sendUpdate = true;
 	}
 	signal(SIGALRM,timerHanlder);

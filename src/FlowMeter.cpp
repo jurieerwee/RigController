@@ -74,6 +74,9 @@ double FlowMeter::getRunningAve(void)
 	ave = FlowInst::runningSum / FlowInst::instRate.size() * this->factor;\
 	piUnlock(0);
 
+	if(FlowInst::instRate.size()==0)
+		return 0;
+
 	return ave;
 }
 

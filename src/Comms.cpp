@@ -150,7 +150,7 @@ namespace comms {
 	void* trans(void* socketComm_)
 	{
 		int socketComm = *(int*)(socketComm_);
-		char buff[255];
+		char buff[1024];
 		int reply = 0;
 		string temp;
 		while(!terminate && !restart)
@@ -164,16 +164,16 @@ namespace comms {
 				transQ.pop();
 				pthread_mutex_unlock(&trans_mut);
 
-				if (temp.length()>254)
+				if (temp.length()>1023)
 				{
 					cout << "Transmit message too large\n";
 					terminateComms();
 					return NULL;
 				}
-				strncpy(buff,temp.c_str(),255);
+				strncpy(buff,temp.c_str(),1024);
 				buff[temp.length()] = '\0';
 				cout << "Message to be sent: " << buff << "\n";
-				reply = write(socketComm,(void*)buff,255);
+				reply = write(socketComm,(void*)buff,1024);
 				if (reply < 0)
 				{
 					cout << "Transmit error\n";
