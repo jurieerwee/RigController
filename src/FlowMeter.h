@@ -25,10 +25,10 @@ namespace FlowInst
 	extern struct 	timespec flowTimePrev;
 	extern int		counter;
 	extern volatile bool dir;	//True = forward, false = backwards
+	extern int dirPin;
 
 	void flowInterrupt(void);
-	void dirInterruptRise(void);
-	void dirInterruptFall(void);
+	void dirInterrupt(void);
 	struct timespec diff(struct timespec start, struct timespec end);
 
 }
@@ -50,7 +50,7 @@ private:
 	const int dirPin;
 	const bool pull;
 	const bool pullUp;
-	const int factor;
+	const double factor;
 };
 
 #endif /* SRC_FLOWMETER_H_ */

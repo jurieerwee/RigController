@@ -9,6 +9,8 @@
 #include <wiringPi.h>
 #include <time.h>
 #include <deque>
+#include <stdio.h>
+#include <iostream>
 
 using namespace std;
 
@@ -19,6 +21,7 @@ struct 	timespec FlowInst::flowTime;
 struct 	timespec FlowInst::flowTimePrev;
 int		FlowInst::counter =0;
 volatile bool FlowInst::dir;	//True = forward, false = backwards
+int		FlowInst::dirPin;
 
 FlowMeter::FlowMeter(int _flowPin, int _dirPin, bool _pull, bool _pullUp,  double _factor, int runLength): flowPin(_flowPin), dirPin(_dirPin), pull(_pull),pullUp(_pullUp), factor(_factor)
 {
@@ -45,21 +48,19 @@ void FlowMeter::init()
 		}
 	}
 
+	FlowInst::dirPin = this->dirPin;
 	if(this->dirPin>-1)
 	{
 		pinMode(this->dirPin, INPUT);
 		pullUpDnControl(this->dirPin, this->pull ?(this->pullUp?PUD_UP:PUD_DOWN):PUD_OFF);
-		if(wiringPiISR (this->dirPin,INT_EDGE_FALLING, &FlowInst::dirInterruptFall)<0)
+		if(wiringPiISR (this->dirPin,INT_EDGE_BOTH, &FlowInst::dirInterrupt)<0)
 		{
-			//printf( "Unable to setup ISR\n");
-			//TODO, gooi error of iets.
-		}
-		if(wiringPiISR (this->dirPin,INT_EDGE_RISING, &FlowInst::dirInterruptRise)<0)
-		{
-			//printf( "Unable to setup ISR\n");
+			printf( "Unable to setup ISR\n");
 			//TODO, gooi error of iets.
 		}
 	}
+
+	FlowInst::dir = !(bool)(digitalRead(this->dirPin));
 }
 
 bool FlowMeter::getDir(void)
@@ -132,15 +133,13 @@ void FlowInst::flowInterrupt(void)
 	counter++;
 }
 
-void FlowInst::dirInterruptRise(void)
+void FlowInst::dirInterrupt(void)
 {
-	FlowInst::dir = false;
+	FlowInst::dir = !(bool)digitalRead(FlowInst::dirPin);
+	//cout << "Rise\n";
 }
 
-void FlowInst::dirInterruptFall(void)
-{
-	FlowInst::dir = true;
-}
+
 
 struct timespec FlowInst::diff(struct timespec start, struct timespec end)
 {
