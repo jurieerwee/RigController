@@ -8,6 +8,8 @@
 #include "LogicSensor.h"
 #include <wiringPi.h>
 #include <stdlib.h>
+#include <iostream>
+#include <stdio.h>
 
 using namespace std;
 
@@ -33,6 +35,7 @@ bool LogicSensor::update()
 bool LogicSensor::getState()
 {
 	//return this->isHigh == this->nopen;
+
 	return (this->nopen xor (this->getHigh()==this->pullUp));
 
 }

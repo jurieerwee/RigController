@@ -41,7 +41,7 @@ Rig::Rig(po::variables_map &vm) : tankFullSensor(vm["tankFullPin"].as<int>(),tru
 	this->fullSpeed = vm["pumpFullSpeed"].as<int>();
 	analogIn.setScale(this->pressureCh, vm["pressureOffset"].as<double>(), vm["pressureScale"].as<double>());
 	wiringPiSetup();	//Call it here, so that it is only called once
-
+	cout << "Full NO: " << vm["tankFullNO"].as<int>() << "Empty NO: " << vm["tankEmptyNO"].as<int>() << "\n";
 }
 
 
@@ -224,7 +224,7 @@ bool Rig::getSensor_FullTank()	//True if full, false if not full
 
 bool Rig::getSensor_EmptyTank() //True is empty, false if not empty
 {
-	return !this->tankEmptySensor.getState();
+	return this->tankEmptySensor.getState();
 }
 
 bool Rig::getSensor_FlowDirection() //True if forward(out) flow, false if reverse flow
