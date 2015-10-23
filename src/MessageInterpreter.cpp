@@ -134,55 +134,62 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 	{
 
 		bool aswr = false;
-		switch(instrState[instruction])
-		{
-		case primeCMD:
-			aswr = ctrl.changeState(ctrl.State::PRIME1,true);
-			break;
-		case idleCMD:
-			if(ctrl.state == ctrl.State::ERROR)	//From error state, clearErrorCMD must be called.
-				aswr = false;
-			else
+		try{
+			switch(instrState.at(instruction))
+			{
+			case primeCMD:
+				aswr = ctrl.changeState(ctrl.State::PRIME1,true);
+				break;
+			case idleCMD:
+				if(ctrl.state == ctrl.State::ERROR)	//From error state, clearErrorCMD must be called.
+					aswr = false;
+				else
+					aswr = ctrl.changeState(ctrl.State::IDLE,true);
+				break;
+			case fillTankCMD:
+				aswr = ctrl.changeState(ctrl.State::FILL,true);
+				break;
+			case forceFillCMD:
+				aswr = ctrl.changeState(ctrl.State::FORCEFILL,true);
+				break;
+			case pumpCMD:
+				aswr = ctrl.changeState(ctrl.State::PUMPING,true);
+				break;
+			case newPressureCMD:
+				aswr = ctrl.changeState(ctrl.State::PRESSURE_TRANS,true);
+				break;
+			case releaseHoldCMD:
+				aswr = ctrl.changeState(ctrl.State::PUMPING,true);
+				break;
+			case clearErrCMD:
 				aswr = ctrl.changeState(ctrl.State::IDLE,true);
-			break;
-		case fillTankCMD:
-			aswr = ctrl.changeState(ctrl.State::FILL,true);
-			break;
-		case forceFillCMD:
-			aswr = ctrl.changeState(ctrl.State::FORCEFILL,true);
-			break;
-		case pumpCMD:
-			aswr = ctrl.changeState(ctrl.State::PUMPING,true);
-			break;
-		case newPressureCMD:
-			aswr = ctrl.changeState(ctrl.State::PRESSURE_TRANS,true);
-			break;
-		case releaseHoldCMD:
-			aswr = ctrl.changeState(ctrl.State::PUMPING,true);
-			break;
-		case clearErrCMD:
-			aswr = ctrl.changeState(ctrl.State::IDLE,true);
-			break;
-		case overrideCMD:
-			aswr = ctrl.changeState(ctrl.State::OVERRIDE,true);
-			break;
-		case disableOverrideCMD:
-			aswr = ctrl.changeState(ctrl.State::IDLE,true);
-			break;
-		case terminateCMD:
-			if(ctrl.state == ctrl.State::IDLE || ctrl.state == ctrl.State::IDLE_PRES)
-			{
-				aswr = true;
-				terminate = true;
+				break;
+			case overrideCMD:
+				aswr = ctrl.changeState(ctrl.State::OVERRIDE,true);
+				break;
+			case disableOverrideCMD:
+				aswr = ctrl.changeState(ctrl.State::IDLE,true);
+				break;
+			case terminateCMD:
+				if(ctrl.state == ctrl.State::IDLE || ctrl.state == ctrl.State::IDLE_PRES)
+				{
+					aswr = true;
+					terminate = true;
+				}
+				else
+				{
+					aswr = false;
+				}
+				break;
+			default:
+				failed = true;
+				break;
 			}
-			else
-			{
-				aswr = false;
-			}
-			break;
-		default:
+		}
+		catch(const out_of_range& err)
+		{
+			aswr = false;
 			failed = true;
-			break;
 		}
 		reply += "\"code\":";
 		reply += to_string(aswr);
@@ -198,35 +205,43 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 		}
 		else
 		{
-			switch(instrMan[instruction])
+			try
 			{
-			case startPumpCMD:
-				aswr = ctrl.rig.startPumpOnly();
-				break;
-			case stopPumpCMD:
-				aswr = ctrl.rig.stopPumpOnly();
-				break;
-			case openInflowValveCMD:
-				aswr = ctrl.rig.openInflowValveOnly();
-				break;
-			case closeInflowValveCMD:
-				aswr = ctrl.rig.closeInflowValveOnly();
-				break;
-			case openOutflowValveCMD:
-				aswr = ctrl.rig.openOutflowValveOnly();
-				break;
-			case closeOutflowValveCMD:
-				aswr = ctrl.rig.closeOutflowValveOnly();
-				break;
-			case openReleaseValveCMD:
-				aswr = ctrl.rig.openReleaseValveOnly();
-				break;
-			case closeReleaseValveCMD:
-				aswr = ctrl.rig.closeReleaseValveOnly();
-				break;
-			default:
+				switch(instrMan.at(instruction))
+				{
+				case startPumpCMD:
+					aswr = ctrl.rig.startPumpOnly();
+					break;
+				case stopPumpCMD:
+					aswr = ctrl.rig.stopPumpOnly();
+					break;
+				case openInflowValveCMD:
+					aswr = ctrl.rig.openInflowValveOnly();
+					break;
+				case closeInflowValveCMD:
+					aswr = ctrl.rig.closeInflowValveOnly();
+					break;
+				case openOutflowValveCMD:
+					aswr = ctrl.rig.openOutflowValveOnly();
+					break;
+				case closeOutflowValveCMD:
+					aswr = ctrl.rig.closeOutflowValveOnly();
+					break;
+				case openReleaseValveCMD:
+					aswr = ctrl.rig.openReleaseValveOnly();
+					break;
+				case closeReleaseValveCMD:
+					aswr = ctrl.rig.closeReleaseValveOnly();
+					break;
+				default:
+					failed = true;
+					break;
+				}
+			}
+			catch(const out_of_range& err)
+			{
+				aswr = false;
 				failed = true;
-				break;
 			}
 		}
 		reply += "\"code\":";
@@ -237,7 +252,7 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 	{
 		bool aswr = false;
 		try{
-			switch(instrSet[instruction])
+			switch(instrSet.at(instruction))
 			{
 			case setPumpPercCMD:
 				aswr = ctrl.setDesiredPumpPerc(pt.get<double>("msg.percentage"));
@@ -257,8 +272,14 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 				failed = true;
 				break;
 			}
-		}catch(boost::exception &e)
+		}
+		catch(boost::exception &e)
 		{
+			failed = true;
+		}
+		catch(const out_of_range& err)
+		{
+			aswr = false;
 			failed = true;
 		}
 		reply += "\"code\":";
