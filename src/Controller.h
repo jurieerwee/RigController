@@ -12,9 +12,11 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/variables_map.hpp>
+#include <boost/log/trivial.hpp>
 
 
 namespace po = boost::program_options;
+namespace src = boost::log::sources;
 
 #include "Rig.h"
 //#include "MessageInterpreter.h"
@@ -29,12 +31,13 @@ public:
 	enum State {IDLE,IDLE_PRES,PRIME1,PRIME2,PRIME3, PRIME4,FILL,FORCEFILL,PUMPING,PRESSURE_TRANS,PRESSURE_HOLD,OVERRIDE,ERROR};
 	int loop();
 
-
+	map<Controller::State,string> stateString;
 
 private:
 	friend class MessageInterpreter;
 
 	po::variables_map vm;
+	src::severity_logger_mt<>& lg;
 	Rig rig;
 
 	State state = IDLE;

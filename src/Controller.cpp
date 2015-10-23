@@ -17,18 +17,34 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/variables_map.hpp>
+#include <boost/log/trivial.hpp>
 
 namespace po = boost::program_options;
+namespace src = boost::log::sources;
 
 using namespace std;
 
-Controller::Controller(po::variables_map& vm_) : rig((vm_)) , pressThreash(vm_["pressureThreshold"].as<double>()) {
+Controller::Controller(po::variables_map& vm_) : rig((vm_)) , pressThreash(vm_["pressureThreshold"].as<double>()), lg(my_logger::get()){
 	// TODO Auto-generated constructor stub
-
+	this->stateString.insert(pair<State,string>(State::IDLE,"IDLE"));
+	this->stateString.insert(pair<State,string>(State::IDLE_PRES,"IDLE_PRES"));
+	this->stateString.insert(pair<State,string>(State::PRIME1,"PRIME1"));
+	this->stateString.insert(pair<State,string>(State::PRIME2,"PRIME2"));
+	this->stateString.insert(pair<State,string>(State::PRIME3,"PRIME3"));
+	this->stateString.insert(pair<State,string>(State::PRIME4,"PRIME4"));
+	this->stateString.insert(pair<State,string>(State::FILL,"FILL"));
+	this->stateString.insert(pair<State,string>(State::FORCEFILL,"FORCEFILL"));
+	this->stateString.insert(pair<State,string>(State::PUMPING,"PUMPING"));
+	this->stateString.insert(pair<State,string>(State::PRESSURE_TRANS,"PRESSURE_TRANS"));
+	this->stateString.insert(pair<State,string>(State::PRESSURE_HOLD,"PRESSURE_HOLD"));
+	this->stateString.insert(pair<State,string>(State::OVERRIDE,"OVERRIDE"));
+	this->stateString.insert(pair<State,string>(State::ERROR,"ERROR"));
 }
 
 Controller::~Controller() {
 	// TODO Auto-generated destructor stub
+	//State to string
+
 }
 
 
@@ -101,6 +117,8 @@ int Controller::loop()
 
 int Controller::changeState(State newState, bool cmd)
 {
+	BOOST_LOG_SEV(this->lg,logging::trivial::info) << "ChangeState request: " << this->stateString[newState] << ", cmd=" << cmd;
+
 	switch(newState)
 	{
 	case ERROR:
