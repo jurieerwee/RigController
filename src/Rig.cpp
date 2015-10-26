@@ -33,10 +33,10 @@ using namespace std;
 
 }*/
 
-Rig::Rig(po::variables_map &vm) : tankFullSensor(vm["tankFullPin"].as<int>(),true,true,vm["tankFullNO"].as<int>()), tankEmptySensor(vm["tankEmptyPin"].as<int>(),true,true,vm["tankEmptyNO"].as<int>()), pump(vm["pumpFullSpeed"].as<int>(),vm["dacID"].as<int>(),vm["startPin"].as<int>(),vm["runningPin"].as<int>(),vm["errStatusPin"].as<int>()), lg(my_logger::get()),\
+Rig::Rig(po::variables_map &vm) :  lg(my_logger::get()), tankFullSensor(vm["tankFullPin"].as<int>(),true,true,vm["tankFullNO"].as<int>()), tankEmptySensor(vm["tankEmptyPin"].as<int>(),true,true,vm["tankEmptyNO"].as<int>()), pump(vm["pumpFullSpeed"].as<int>(),vm["dacID"].as<int>(),vm["startPin"].as<int>(),vm["runningPin"].as<int>(),vm["errStatusPin"].as<int>()),\
 		inflowValve(vm["inflowValvePin"].as<int>(),false), outflowValve(vm["outflowValvePin"].as<int>(),false), analogIn(vm["adcID"].as<int>()), pressureCh(vm["pressureCh"].as<int>()),\
 		flow1(vm["flow1Pin"].as<int>(),vm["flow1dirPin"].as<int>(), vm["flow1Pull"].as<bool>(), vm["flow1PullUp"].as<bool>(),vm["flow1Factor"].as<double>(),vm["flow1RunLength"].as<int>()),\
-		releaseValve(vm["releaseValvePin"].as<int>(),false), emerBtn(vm["emergencyBtnPin"].as<int>(), vm["emergencyBtnPull"].as<bool>(), vm["emergencyBtnPullUp"].as<bool>(), vm["emergencyBtnNO"].as<bool>()), pressureOverride(false)
+		releaseValve(vm["releaseValvePin"].as<int>(),false), emerBtn(vm["emergencyBtnPin"].as<int>(), vm["emergencyBtnPull"].as<bool>(), vm["emergencyBtnPullUp"].as<bool>(), vm["emergencyBtnNO"].as<bool>())
 {
 	this->fullSpeed = vm["pumpFullSpeed"].as<int>();
 	analogIn.setScale(this->pressureCh, vm["pressureOffset"].as<double>(), vm["pressureScale"].as<double>());
@@ -257,6 +257,7 @@ double Rig::getLastFlow(int n)	//Returns the flow average of last n pulses in li
 
 double Rig::getSensor_Pressure() //Returns pressure transducer reading in standard measure.  TODO: Units to be confirmed
 {
+	//BOOST_LOG_SEV(this->lg,logging::trivial::debug) << "pressureOverride"<< this->pressureOverride << ", testerPressure" << this->testerPressure;
 	//NBNB: Not that with current setup, this instruction will return the previous conversion and triggers the next.
 	if(!this->pressureOverride)	//Code added to allow for pressure override for testing purposes
 		return this->analogIn.readChannel(this->pressureCh);

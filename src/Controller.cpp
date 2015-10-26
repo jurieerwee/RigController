@@ -24,8 +24,11 @@ namespace src = boost::log::sources;
 
 using namespace std;
 
-Controller::Controller(po::variables_map& vm_) : rig((vm_)) , pressThreash(vm_["pressureThreshold"].as<double>()), lg(my_logger::get()){
+Controller::Controller(po::variables_map& vm_) : lg(my_logger::get()), rig((vm_)) , presThresh(vm_["pressureThreshold"].as<double>())
+{
 	// TODO Auto-generated constructor stub
+	BOOST_LOG_SEV(this->lg,logging::trivial::info) << "Pressure threshold set to: " << this->presThresh ;
+
 	this->stateString.insert(pair<State,string>(State::IDLE,"IDLE"));
 	this->stateString.insert(pair<State,string>(State::IDLE_PRES,"IDLE_PRES"));
 	this->stateString.insert(pair<State,string>(State::PRIME1,"PRIME1"));
@@ -53,6 +56,7 @@ Controller::~Controller() {
 int Controller::loop()
 {
 	//Note: Interpret called in ctrlTread loop.  This avoids circular dependence.
+	//BOOST_LOG_SEV(this->lg,logging::trivial::debug) << "pres: " << this->rig.getSensor_Pressure() << ", thres: " << this->presThresh << ", pressurised:" <<(this->rig.getSensor_Pressure() > this->presThresh);
 
 	if(this->rig.getEmerBtn())
 	{
@@ -61,7 +65,6 @@ int Controller::loop()
 
 	//TODO: Slow this down!
 	this->rig.forceSensorUpdate();
-
 
 	if(this->rig.getPumpSpeed()!=this->setPercentage)	//If desired set percentage changed, change pump speed
 		this->rig.setPumpSpeed(this->setPercentage);
@@ -292,6 +295,10 @@ inline int Controller::loopPrime3()
 	else if(this->getTank()==FULL)
 	{
 		this->changeState(IDLE,false);
+	}
+	else if(this->getTank()==EMPTY)
+	{
+		return true;
 	}
 	else if(timers::delay30)
 	{
@@ -711,7 +718,8 @@ inline int Controller::initError()
 
 inline bool Controller::isPressure()	//Check whether pressure is high enough
 {
-	return this->rig.getSensor_Pressure() >= this->pressThreash;
+
+	return (this->rig.getSensor_Pressure() > this->presThresh);
 }
 
 inline Controller::TankState Controller::getTank()	//Translate two tank sensors to a state

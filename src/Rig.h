@@ -88,17 +88,17 @@ private:
 	LogicSensor tankFullSensor;
 	LogicSensor tankEmptySensor;
 	Pump		pump;
-	LogicOut	outflowValve;
-	LogicOut	releaseValve;
 	LogicOut	inflowValve;
+	LogicOut	outflowValve;
 	AnalogIn	analogIn;
 	const int	pressureCh;	//Channel of the ADC corresponding to Pressure
 	FlowMeter	flow1;
+	LogicOut	releaseValve;
 	LogicSensor emerBtn;	//Emergency button
 
 	//Used for testing purposes only
-	double testerPressure;
-	bool pressureOverride;
+	double testerPressure =0;
+	bool pressureOverride = false;
 
 };
 
