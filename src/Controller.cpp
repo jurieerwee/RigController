@@ -194,13 +194,13 @@ int Controller::changeState(State newState, bool cmd)
 		break;
 	case PRESSURE_HOLD:
 		if ((this->PRESSURE_TRANS) &&!cmd)
-			return this->initPumping();
+			return this->initPressureHold();
 		else
 			return false;
 		break;
 	case OVERRIDE:
 		if ((this->state == IDLE_PRES || this->IDLE) && cmd)
-			return this->initPumping();
+			return this->initOverride();
 		else
 			return false;
 		break;
