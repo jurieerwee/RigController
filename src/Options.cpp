@@ -71,6 +71,8 @@ bool Options::initOptions()
 			("emergencyBtnPull", po::value<bool>(),"Set 1 if emergency button level must be pull internally, else 0")
 			("emergencyBtnPullUp", po::value<bool>(),"Set 1 if emergency button level must be pull high, 0 if pulled low.")
 			("emergencyBtnNO", po::value<bool>(),"Set to 0 if N.C. sensor, else 0")
+			("pressSettledTolerance",po::value<double>(),"Pressure tolerance whereby system considered as stable (PI controller)")
+			("pressSettledCount",po::value<int>(), "Number of consecutive samples that must be within threshold to be considered stable(PI controller")
 			;
 	ifstream ifs("config.cfg");
 	if(!ifs)

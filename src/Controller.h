@@ -46,6 +46,9 @@ private:
 	const double presThresh;	//Pressure threshold where system is considered pressurised
 	double setPressure =0;		//Target pressure
 	double setPercentage =0;	//Desired pump percentage
+	const double pressSettledTolerance;	//Tolerance from desired pressure during pressure transient
+	const int pressSettledCount;	//Number of samples that must consecutively be within pressSettledTolerance to be considered settled.
+	int pressSettledCounter = 0;
 
 	int changeState(State newState, bool cmd);
 	int setDesiredPumpPerc(double in);

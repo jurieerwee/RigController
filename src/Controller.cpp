@@ -24,7 +24,8 @@ namespace src = boost::log::sources;
 
 using namespace std;
 
-Controller::Controller(po::variables_map& vm_) : lg(my_logger::get()), rig((vm_)) , presThresh(vm_["pressureThreshold"].as<double>())
+Controller::Controller(po::variables_map& vm_) : lg(my_logger::get()), rig((vm_)) , presThresh(vm_["pressureThreshold"].as<double>()), pressSettledTolerance(vm_["pressSettledTolerance"].as<double>()),\
+		pressSettledCount(vm_["pressSettledCount"].as<int>())
 {
 	// TODO Auto-generated constructor stub
 	BOOST_LOG_SEV(this->lg,logging::trivial::info) << "Pressure threshold set to: " << this->presThresh ;
@@ -416,9 +417,11 @@ inline int Controller::loopPressureTrans()
 		this->changeState(ERROR,false);
 		return false;
 	}
-	//TODO: PressureReached
 
+	//TODO: PressureReached??
 	//TODO:  Closed loop control
+
+
 
 	return true;
 }
@@ -651,6 +654,8 @@ inline int Controller::initPressureTrans()
 	success &= this->rig.closeInflowValveOnly();
 	success &= this->rig.openOutflowValveOnly();
 	success &= this->rig.closeReleaseValveOnly();
+
+	this->pressSettledCounter = 0; //Reset
 
 	if(!success)
 	{
