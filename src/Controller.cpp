@@ -181,13 +181,13 @@ int Controller::changeState(State newState, bool cmd)
 			return false;
 		break;
 	case PUMPING:
-		if ((this->state == IDLE_PRES || this->IDLE || this->PRESSURE_HOLD) && cmd)
+		if ((this->state == IDLE_PRES || this->state == this->IDLE || this->state == this->PRESSURE_HOLD) && cmd)
 			return this->initPumping();
 		else
 			return false;
 		break;
 	case PRESSURE_TRANS:
-		if ((this->state == PUMPING || this->PRESSURE_HOLD) && cmd)
+		if ((this->state == PUMPING || this->state == this->PRESSURE_HOLD) && cmd)
 			return this->initPressureTrans();
 		else
 			return false;
@@ -199,7 +199,7 @@ int Controller::changeState(State newState, bool cmd)
 			return false;
 		break;
 	case OVERRIDE:
-		if ((this->state == IDLE_PRES || this->IDLE) && cmd)
+		if ((this->state == IDLE_PRES ||this->state ==  this->IDLE) && cmd)
 			return this->initOverride();
 		else
 			return false;
