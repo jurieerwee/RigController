@@ -36,14 +36,14 @@ public:
 private:
 	friend class MessageInterpreter;
 
-	po::variables_map vm;
+	//po::variables_map vm;
 	src::severity_logger_mt<>& lg;
 	Rig rig;
 
 	State state = IDLE;
 	enum TankState {TRANSIENT=0,EMPTY,FULL,TANK_ERROR};
 
-	double pressThreash;	//Pressure threshold where system is considered pressurised
+	const double presThresh;	//Pressure threshold where system is considered pressurised
 	double setPressure =0;		//Target pressure
 	double setPercentage =0;	//Desired pump percentage
 
