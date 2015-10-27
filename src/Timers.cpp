@@ -22,6 +22,9 @@ unsigned int delay30_c =1;
 bool sendUpdate = false;
 unsigned int sendUpdate_c = 1;
 
+bool controllerPulse = false;
+unsigned int controllerPulse_c =1;
+
 void timerHanlder(int in)
 {
 	signal(SIGALRM,SIG_IGN);
@@ -41,6 +44,12 @@ void timerHanlder(int in)
 	{
 		sendUpdate_c = (int)(0.5*FREQ);
 		sendUpdate = true;
+	}
+
+	if(--controllerPulse_c==0)
+	{
+		controllerPulse_c = 1;
+		controllerPulse = true;
 	}
 	signal(SIGALRM,timerHanlder);
 }
@@ -72,6 +81,14 @@ int reset_sendUpdate()
 	int old = sendUpdate_c;
 	sendUpdate_c = (int)(0.5*FREQ);
 	sendUpdate = false;
+	return old;
+}
+
+int reset_controllerPulse()
+{
+	int old = controllerPulse_c;
+	controllerPulse_c = (int)(0.5*FREQ);
+	controllerPulse = false;
 	return old;
 }
 

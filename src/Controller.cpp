@@ -57,15 +57,20 @@ Controller::~Controller() {
 int Controller::loop()
 {
 	//Note: Interpret called in ctrlTread loop.  This avoids circular dependence.
-	//BOOST_LOG_SEV(this->lg,logging::trivial::debug) << "pres: " << this->rig.getSensor_Pressure() << ", thres: " << this->presThresh << ", pressurised:" <<(this->rig.getSensor_Pressure() > this->presThresh);
 
 	if(this->rig.getEmerBtn())
 	{
 		changeState(ERROR,false);
 	}
 
-	//TODO: Slow this down!
-	this->rig.forceSensorUpdate();
+	if(timers::controllerPulse)
+	{
+		timers::controllerPulse = false;
+		this->rig.forceSensorUpdate();
+
+	}
+
+
 
 	if(this->rig.getPumpSpeed()!=this->setPercentage)	//If desired set percentage changed, change pump speed
 		this->rig.setPumpSpeed(this->setPercentage);
