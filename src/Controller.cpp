@@ -218,6 +218,15 @@ inline int Controller::loopIdle()
 	{
 		this->changeState(IDLE_PRES,false);
 	}
+	else if(!timers::delay1)
+	{
+		return true;
+	}
+	else if(this->rig.getPumpRunning())
+	{
+		this->changeState(ERROR,false);
+		return false;
+	}
 
 	return true;
 }
@@ -227,6 +236,15 @@ inline int Controller::loopIdlePres()
 	if(!this->isPressure())
 	{
 		this->changeState(IDLE,false);
+	}
+	else if(!timers::delay1)
+	{
+		return true;
+	}
+	else if(this->rig.getPumpRunning())
+	{
+		this->changeState(ERROR,false);
+		return false;
 	}
 
 	return true;
@@ -476,6 +494,8 @@ inline int Controller::initIdle()
 	success &= this->rig.closeOutflowValveOnly();
 	success &= this->rig.closeReleaseValveOnly();
 
+	timers::reset_delay1();	//Start 1 second delay
+
 	if(!success)
 	{
 		this->changeState(ERROR,false);
@@ -494,6 +514,8 @@ inline int Controller::initIdlePres()
 	success &= this->rig.closeInflowValveOnly();
 	success &= this->rig.closeOutflowValveOnly();
 	success &= this->rig.closeReleaseValveOnly();
+
+	timers::reset_delay1();	//Start 1 second delay
 
 	if(!success)
 	{
