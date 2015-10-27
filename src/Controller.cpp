@@ -68,6 +68,8 @@ int Controller::loop()
 		timers::controllerPulse = false;
 		this->rig.forceSensorUpdate();
 
+		//TODO: PI controller
+
 	}
 
 

@@ -290,6 +290,7 @@ double Rig::getFullPressure()
 bool Rig::forceSensorUpdate()
 {
 	//TODO Update all sensor states that otherwise gets updated by interupt.
+	this->analogIn.sampleChannel(this->pressureCh);
 	this->tankEmptySensor.update();
 	this->tankFullSensor.update();
 	this->pump.statusUpdate();

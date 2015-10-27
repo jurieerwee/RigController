@@ -22,6 +22,7 @@ public:
 	bool activateChannel(int channel);
 	bool setup();
 	bool setScale(int ch, double offset, double scale);
+	int sampleChannel(int channel);
 
 private:
 
@@ -29,6 +30,8 @@ private:
 	//These channel numbers correspond to the ADC and not the PCB numbering.
 	double offset[4];	//The offset to add to the 4 channels
 	double scale[4];	//The scale by which to adjust the 4 channels.
+	//Stored data when read,sothat it can be fetched without re-reading.  Enables synchronous reading.
+	int data[4] ={-1,-1,-1,-1};
 };
 
 #endif /* ANALOGIN_H_ */

@@ -18,7 +18,7 @@ AnalogIn::~AnalogIn()
 
 }
 
-int AnalogIn::readChannel(int channel)
+int AnalogIn::sampleChannel(int channel)
 {
 	//TODO!! Hierdie moet verander.  Hierdie I2C command lees die vorige conversion en gee opdrag van watter kanaal om volgende te lees, so met multi channels gaan die verkeerd werk
 
@@ -31,11 +31,19 @@ int AnalogIn::readChannel(int channel)
 			return -1;
 
 	if (((value>>12) & 3) != channel)
-		return -1;
+	{
+		this->data[channel] =-1;
+		return false;
+	}
 
-	return ((value & 0x0FFF)>>2) & 0x03FF;
+	this->data[channel] =  ((value & 0x0FFF)>>2) & 0x03FF;
 
+	return true;
+}
 
+int AnalogIn::readChannel(int channel)
+{
+	return this->data[channel];
 }
 
 double AnalogIn::readChannelScaled(int channel)	//Returns the scaled value read from the ADC.
