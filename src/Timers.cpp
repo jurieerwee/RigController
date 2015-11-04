@@ -68,10 +68,10 @@ int reset_delay30()
 	return old;
 }
 
-int reset_delay1()
+int reset_delay1()	//delay1 now 2 seconds long.
 {
 	int old = delay1_c;
-	delay1_c = 1*FREQ;
+	delay1_c = 2*FREQ;
 	delay1 = false;
 	return old;
 }
