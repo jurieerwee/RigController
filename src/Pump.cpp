@@ -31,7 +31,7 @@ bool Pump::setSpeed(int speed)
 
 	int data = speed;
 	int command = 0x30;
-	data = data <<4;
+	//data = data <<4;
 	wiringPiI2CWriteReg8(this->dac,command,data);
 
 	return true;
