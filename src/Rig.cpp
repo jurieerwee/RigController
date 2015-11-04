@@ -40,6 +40,7 @@ Rig::Rig(po::variables_map &vm) :  lg(my_logger::get()), tankFullSensor(vm["tank
 {
 	this->fullSpeed = vm["pumpFullSpeed"].as<int>();
 	analogIn.setScale(this->pressureCh, vm["pressureOffset"].as<double>(), vm["pressureScale"].as<double>());
+	BOOST_LOG_SEV(this->lg,logging::trivial::info) << "Pressure scale set to " << vm["pressureScale"].as<double>() << " and offset to " <<  vm["pressureOffset"].as<double>();
 	wiringPiSetup();	//Call it here, so that it is only called once
 	cout << "Full NO: " << vm["tankFullNO"].as<int>() << "Empty NO: " << vm["tankEmptyNO"].as<int>() << "\n";
 }
@@ -265,7 +266,7 @@ double Rig::getSensor_Pressure() //Returns pressure transducer reading in standa
 	//BOOST_LOG_SEV(this->lg,logging::trivial::debug) << "pressureOverride"<< this->pressureOverride << ", testerPressure" << this->testerPressure;
 	//NBNB: Not that with current setup, this instruction will return the previous conversion and triggers the next.
 	if(!this->pressureOverride)	//Code added to allow for pressure override for testing purposes
-		return this->analogIn.readChannel(this->pressureCh);
+		return this->analogIn.readChannelScaled(this->pressureCh);
 	else
 		return this->testerPressure;
 }
