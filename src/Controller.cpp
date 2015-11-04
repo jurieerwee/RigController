@@ -43,6 +43,8 @@ Controller::Controller(po::variables_map& vm_) : lg(my_logger::get()), rig((vm_)
 	this->stateString.insert(pair<State,string>(State::PRESSURE_HOLD,"PRESSURE_HOLD"));
 	this->stateString.insert(pair<State,string>(State::OVERRIDE,"OVERRIDE"));
 	this->stateString.insert(pair<State,string>(State::ERROR,"ERROR"));
+
+	this->initIdle();
 }
 
 Controller::~Controller() {

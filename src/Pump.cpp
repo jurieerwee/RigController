@@ -12,7 +12,7 @@
 #include "LogicSensor.h"
 
 Pump::Pump(int _fullSpeed, int _dacID, int startPin, int runningPin, int errStatusPin): pumpFullSpeed(_fullSpeed),pumpSpeed(_fullSpeed) ,\
-dacID(_dacID),  dac(wiringPiI2CSetup(_dacID)), startStop(startPin,true),running(runningPin,false,true,false),errStatus(errStatusPin,false,true,false)
+dacID(_dacID),  dac(wiringPiI2CSetup(_dacID)), startStop(startPin,true),running(runningPin,false,true,true),errStatus(errStatusPin,false,true,true)
 {
 	this->dacSetup();
 
