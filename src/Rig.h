@@ -64,6 +64,7 @@ public:
 	bool getSensor_FlowDirection(); //True if forward(out) flow, false if reverse flow
 	bool resetFlowMeasuring();
 	double getFlowMeasure();	//Returns the flow meter reading in liters
+	int flowZeroPulse();
 	double getSensor_Pressure(); //Returns pressure transducer reading in standard measure.  TODO: Units to be confirmed
 	bool forceSensorUpdate();
 	int getPumpSpeed();

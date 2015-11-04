@@ -16,6 +16,7 @@ namespace timers {
 	extern bool delay30; //30second delay
 	extern bool sendUpdate;
 	extern bool controllerPulse; //set at highest freq for the control loop
+	extern bool flowTimeout;
 
 	void timerHanlder(int in);
 	void init();
@@ -23,6 +24,7 @@ namespace timers {
 	int reset_delay1();
 	int reset_sendUpdate();
 	int reset_controllerPulse();
+	int reset_flowTimeout();
 
 
 } /* namespace timers */

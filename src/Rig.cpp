@@ -260,6 +260,12 @@ double Rig::getLastFlow(int n)	//Returns the flow average of last n pulses in li
 	return this->flow1.getLastAve(n);
 }
 
+int Rig::flowZeroPulse()
+{
+	this->flow1.zeroPulse();
+	return true;
+}
+
 
 double Rig::getSensor_Pressure() //Returns pressure transducer reading in standard measure.  TODO: Units to be confirmed
 {

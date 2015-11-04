@@ -74,7 +74,11 @@ int Controller::loop()
 
 	}
 
-
+	if(timers::flowTimeout)
+	{
+		this->rig.flowZeroPulse();
+		timers::reset_flowTimeout();
+	}
 
 	if(this->rig.getPumpPerc()!=this->setPercentage)	//If desired set percentage changed, change pump speed
 		this->rig.setPumpSpeed(this->setPercentage);

@@ -11,6 +11,7 @@
 #include <deque>
 #include <stdio.h>
 #include <iostream>
+#include "Timers.h"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ struct 	timespec FlowInst::flowTimePrev;
 int		FlowInst::counter =0;
 volatile bool FlowInst::dir;	//True = forward, false = backwards
 int		FlowInst::dirPin;
+bool FlowInst::firstPulse = true;  //Used to indicate that there is no previous pulse
 
 FlowMeter::FlowMeter(int _flowPin, int _dirPin, bool _pull, bool _pullUp,  double _factor, int runLength): flowPin(_flowPin), dirPin(_dirPin), pull(_pull),pullUp(_pullUp), factor(_factor)
 {
@@ -112,31 +114,63 @@ int FlowMeter::setLength(int _length)	//Returns current length
 	return temp;
 }
 
-
-
-void FlowInst::flowInterrupt(void)
+void FlowMeter::zeroPulse()	//This method is to be called after a timeout is triggered in order to add flow rate of zero, since no interrupts will be trigger at zero flow
 {
-	FlowInst::flowTimePrev.tv_sec = FlowInst::flowTime.tv_sec;
-	FlowInst::flowTimePrev.tv_nsec = FlowInst::flowTime.tv_nsec;
-	clock_gettime(CLOCK_MONOTONIC,&FlowInst::flowTime);
-	struct timespec flowDiff = diff(FlowInst::flowTimePrev,FlowInst::flowTime);
-	double rate = 60e9/(flowDiff.tv_sec * 1e9 + flowDiff.tv_nsec);
 	piLock(0);
-	FlowInst::instRate.push_front(rate);
-	FlowInst::runningSum += rate;
+	FlowInst::instRate.push_front(0);
 	if(FlowInst::instRate.size() > FlowInst::length)
 	{
 		FlowInst::runningSum -= FlowInst::instRate.back();
 		FlowInst::instRate.pop_back();
 	}
 	piUnlock(0);
-	counter++;
+}
+
+
+
+void FlowInst::flowInterrupt(void)
+{
+	if(FlowInst::firstPulse)
+	{
+		clock_gettime(CLOCK_MONOTONIC,&FlowInst::flowTime);
+		//Reset timeout
+		timers::reset_flowTimeout();
+		FlowInst::firstPulse = false;
+	}
+	else
+	{
+		FlowInst::flowTimePrev.tv_sec = FlowInst::flowTime.tv_sec;
+		FlowInst::flowTimePrev.tv_nsec = FlowInst::flowTime.tv_nsec;
+		clock_gettime(CLOCK_MONOTONIC,&FlowInst::flowTime);
+		//Reset timeout
+		timers::reset_flowTimeout();
+		struct timespec flowDiff = diff(FlowInst::flowTimePrev,FlowInst::flowTime);
+		double rate = 60e9/(flowDiff.tv_sec * 1e9 + flowDiff.tv_nsec);
+		piLock(0);
+		FlowInst::instRate.push_front(rate);
+		FlowInst::runningSum += rate;
+		if(FlowInst::instRate.size() > FlowInst::length)
+		{
+			FlowInst::runningSum -= FlowInst::instRate.back();
+			FlowInst::instRate.pop_back();
+		}
+		piUnlock(0);
+		FlowInst::counter++;
+	}
 }
 
 void FlowInst::dirInterrupt(void)
 {
 	FlowInst::dir = !(bool)digitalRead(FlowInst::dirPin);
-	//cout << "Rise\n";
+	//Reset flow measurement on direction change
+	FlowInst::firstPulse = true;
+	piLock(0);
+	FlowInst::instRate.clear();
+	FlowInst::instRate.push_front(0);
+	FlowInst::runningSum =0;
+	piUnlock(0);
+
+
 }
 
 

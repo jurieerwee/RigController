@@ -26,6 +26,7 @@ namespace FlowInst
 	extern int		counter;
 	extern volatile bool dir;	//True = forward, false = backwards
 	extern int dirPin;
+	extern bool firstPulse;
 
 	void flowInterrupt(void);
 	void dirInterrupt(void);
@@ -44,6 +45,7 @@ public:
 	int getCounter(void);
 	double getLastAve(int count);
 	int setLength(int _length);	//Returns current length
+	void zeroPulse();
 
 private:
 	const int flowPin;

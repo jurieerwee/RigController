@@ -25,6 +25,9 @@ unsigned int sendUpdate_c = 1;
 bool controllerPulse = false;
 unsigned int controllerPulse_c =1;
 
+bool flowTimeout = false;
+unsigned int flowTimeout_c = 1;
+
 void timerHanlder(int in)
 {
 	signal(SIGALRM,SIG_IGN);
@@ -91,5 +94,14 @@ int reset_controllerPulse()
 	controllerPulse = false;
 	return old;
 }
+
+int reset_flowTimeout()
+{
+	int old = flowTimeout_c;
+	flowTimeout_c = 60*FREQ;
+	flowTimeout = false;
+	return old;
+}
+
 
 } /* namespace timers */
