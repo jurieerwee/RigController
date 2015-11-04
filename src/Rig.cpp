@@ -191,6 +191,11 @@ int Rig::getPumpSpeed()
 	return this->pump.getSpeed();
 }
 
+double Rig::getPumpPerc()
+{
+	return this->pump.getSpeedPerc();
+}
+
 bool Rig::getPumpRunning()
 {
 	return this->pump.getPumpRunning();

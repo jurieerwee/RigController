@@ -19,6 +19,7 @@ public:
 	bool setSpeed(int speed);
 	bool setSpeedPerc(double percentage);
 	int getSpeed();
+	double getSpeedPerc();
 	int getFullSpeed();
 	bool setPumpOn(bool set);
 	bool getPumpOn();
@@ -32,6 +33,7 @@ private:
 	//State
 	bool pumpOn = false;
 	int pumpSpeed;
+	double pumpPerc;	//The percentage corresponding to the pumpSpeed
 
 	const int dacID; //I2C ID for DAC IC
 	int dac;	//Handle to DAC

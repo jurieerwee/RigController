@@ -41,14 +41,18 @@ bool Pump::setSpeedPerc(double percentage)	//Percentage is a value between 0 and
 {
 	if(percentage>1 || percentage<0)
 		return false;
-
+	this->pumpPerc = percentage;
 	return this->setSpeed(percentage*this->pumpFullSpeed);
 }
 
 int Pump::getSpeed()
 {
-
 	return this->pumpSpeed;
+}
+
+double Pump::getSpeedPerc()
+{
+	return this->pumpPerc;
 }
 int Pump::getFullSpeed()
 {

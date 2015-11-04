@@ -76,7 +76,7 @@ int Controller::loop()
 
 
 
-	if(this->rig.getPumpSpeed()!=this->setPercentage)	//If desired set percentage changed, change pump speed
+	if(this->rig.getPumpPerc()!=this->setPercentage)	//If desired set percentage changed, change pump speed
 		this->rig.setPumpSpeed(this->setPercentage);
 
 	switch(this->state)

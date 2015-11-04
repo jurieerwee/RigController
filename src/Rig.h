@@ -67,6 +67,7 @@ public:
 	double getSensor_Pressure(); //Returns pressure transducer reading in standard measure.  TODO: Units to be confirmed
 	bool forceSensorUpdate();
 	int getPumpSpeed();
+	double getPumpPerc();
 	bool getPumpRunning();
 	bool getPumpErrStatus();
 	int getFlowCounter();		//Returns the pulse counter that gets reset by ResetFlowMeasuring
