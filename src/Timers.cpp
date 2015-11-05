@@ -118,10 +118,8 @@ int reset_sendUpdate()
 
 int reset_controllerPulse()
 {
-	int old = controllerPulse_c;
-	controllerPulse_c = (int)(0.5*FREQ);
 	controllerPulse = false;
-	return old;
+	return 1;
 }
 
 int reset_flowTimeout()
