@@ -20,7 +20,7 @@ bool delay30 = false; //30second delay
 int delay30_c =0;
 
 bool sendUpdate = false;
-int sendUpdate_c = 0;
+int sendUpdate_c = 1;
 
 bool controllerPulse = false;
 
