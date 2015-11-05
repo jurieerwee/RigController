@@ -413,7 +413,7 @@ inline int Controller::loopPumping()
 		this->changeState(ERROR,false);
 		return false;
 	}
-	else if(!this->isPressure() && !this->isFlow())
+	else if(!this->isPressure() && !this->isForwardFlow())
 	{
 		this->changeState(ERROR,false);
 		return false;
@@ -443,7 +443,7 @@ inline int Controller::loopPressureTrans()
 		this->changeState(ERROR,false);
 		return false;
 	}
-	else if(!this->isPressure() && !this->isFlow())
+	else if(!this->isPressure() && !this->isForwardFlow())
 	{
 		this->changeState(ERROR,false);
 		return false;
@@ -478,7 +478,7 @@ inline int Controller::loopPressureHold()
 		this->changeState(ERROR,false);
 		return false;
 	}
-	else if(!this->isPressure() && !this->isFlow())
+	else if(!this->isPressure() && !this->isForwardFlow())
 	{
 		this->changeState(ERROR,false);
 		return false;
@@ -793,9 +793,9 @@ inline bool Controller::isReverseFlow()
 	return (this->rig.getFlowMeasure()>0 && !this->rig.getSensor_FlowDirection());
 }
 
-inline bool Controller::isFlow()
+inline bool Controller::isForwardFlow()
 {
-	return this->rig.getFlowMeasure() >0;
+	return (this->rig.getFlowMeasure() >0 && this->rig.getSensor_FlowDirection());
 }
 
 int Controller::setDesiredPumpPerc(double in)

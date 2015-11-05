@@ -84,7 +84,7 @@ private:
 	inline bool isPressure();	//Check whether pressure is high enough
 	inline 	TankState getTank();	//Translate two tank sensors to a state
 	inline bool isReverseFlow();
-	inline bool isFlow();
+	inline bool isForwardFlow();
 };
 
 #endif /* SRC_CONTROLLER_H_ */

@@ -82,7 +82,7 @@ int MessageInterpreter::sendStatus(Controller *ctrlPtr)
 	msg += "{\"state\":\"" + ctrl.stateString[ctrl.state] + "\",\"tank\":\"" + tankString[ctrl.getTank()] + "\",\"inflowValve\":" + boolToString(ctrl.rig.getInflowValve()) \
 			+ ",\"outflowValve\":" + boolToString(ctrl.rig.getOutflowValve()) + ",\"releaseValve\":" + boolToString(ctrl.rig.getReleaseValve()) \
 			+ ",\"pumpRunning\":" + boolToString(ctrl.rig.getPumpRunning()) + ",\"pumpError\":" + boolToString(ctrl.rig.getPumpErrStatus()) \
-			+ ",\"pressurised\":" + boolToString(ctrl.isPressure()) + ",\"forwardFlow\":" + boolToString(ctrl.isFlow())  + ",\"reverseFlow\":" + boolToString(ctrl.isReverseFlow()) + "}";
+			+ ",\"pressurised\":" + boolToString(ctrl.isPressure()) + ",\"forwardFlow\":" + boolToString(ctrl.isForwardFlow())  + ",\"reverseFlow\":" + boolToString(ctrl.isReverseFlow()) + "}";
 	msg += ",\"runningData\":{\"flowRate\":"+  to_string(ctrl.rig.getFlowMeasure()) + ",\"flowDir\":" + boolToString(ctrl.rig.getSensor_FlowDirection()) \
 			+ ",\"pressure\":" + to_string(ctrl.rig.getSensor_Pressure()) + "}";
 	msg += ",\"setData\":{\"flowRate\":" + to_string(ctrl.rig.getFlowCounter()) + ", \"pressure\":" + to_string(ctrl.rig.getSensor_Pressure()) + "}}}\n";
