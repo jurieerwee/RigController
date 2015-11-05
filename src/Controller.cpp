@@ -764,7 +764,7 @@ inline bool Controller::isPressure()	//Check whether pressure is high enough
 
 inline Controller::TankState Controller::getTank()	//Translate two tank sensors to a state
 {
-	cout << "Empty: " << this->rig.getSensor_EmptyTank() << ", Full:" << (this->rig.getSensor_FullTank()) << "\n";
+	//cout << "Empty: " << this->rig.getSensor_EmptyTank() << ", Full:" << (this->rig.getSensor_FullTank()) << "\n";
 
 	//return (Controller::TankState)( (unsigned int)this->rig.getSensor_EmptyTank() + (unsigned int)(this->rig.getSensor_FullTank())<<1);	//00= transient, 01 = EMPTY, 10= FULL, 11 = ERROR*/
 

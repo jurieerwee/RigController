@@ -15,13 +15,16 @@
 #include <string.h>
 #include <queue>
 #include <string>
+#include <boost/log/trivial.hpp>
 
 using namespace std;
+namespace src = boost::log::sources;
 
 namespace comms {
 
 extern volatile bool terminate;
 extern volatile bool restart;
+extern src::severity_logger_mt<>& lg;
 //extern queue<string> recvQ;
 //extern queue<string> transQ;
 //extern pthread_cond_t trans_cond;

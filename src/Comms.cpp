@@ -14,13 +14,17 @@
 #include <pthread.h>
 #include <string>
 #include <iostream>
+#include <boost/log/trivial.hpp>
+#include "Logging.h"
+
+namespace logging = boost::log;
+namespace src = boost::log::sources;
 
 using namespace std;
 
-
-
 namespace comms {
 
+	//src::severity_logger_mt<>& lg;
 	volatile bool terminate;
 	volatile bool restart;
 	volatile int socketfd;
@@ -34,6 +38,7 @@ namespace comms {
 	//Example from http://www.tutorialspoint.com/unix_sockets/socket_server_example.htm (23/09/2015)
 	int initComms(int port)
 	{
+		//lg = my_logger::get();
 
 		int portno;
 		struct sockaddr_in serv_addr;
@@ -41,10 +46,10 @@ namespace comms {
 		live = false;
 		portno = port;
 
-		cout<<"Connecting on port " << portno << "\n";
+		BOOST_LOG_SEV(my_logger::get(),logging::trivial::info)<<"Connecting on port " << portno;
 		if(socketfd<0)
 		{
-			cout<< "Error opening socket\n";
+			BOOST_LOG_SEV(my_logger::get(),logging::trivial::error)<< "Error opening socket";
 			return -1;
 		}
 		serv_addr.sin_family = AF_INET;
@@ -56,7 +61,7 @@ namespace comms {
 		setsockopt(socketfd,SOL_SOCKET,SO_LINGER,(char *) &lin, sizeof(lin));
 		if (bind(socketfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
 		{
-			cout <<("ERROR on binding\n");
+			BOOST_LOG_SEV(my_logger::get(),logging::trivial::error) <<("ERROR on binding");
 			return -1;
 		}
 
@@ -85,7 +90,7 @@ namespace comms {
 				//cout << "Error on socket accept\n";
 				continue;
 			}
-				cout << "Conneted\n";
+			BOOST_LOG_SEV(my_logger::get(),logging::trivial::info) << "Conneted";
 			//Create threads
 			pthread_create(&transmitter,NULL, &trans, (void*)(&socketComm));
 			pthread_create(&receiver,NULL, &recv, (void*)(&socketComm));
@@ -97,7 +102,7 @@ namespace comms {
 			close(socketComm);
 			pthread_join(receiver,NULL);
 
-			cout << "Comm threads joined\n";
+			BOOST_LOG_SEV(my_logger::get(),logging::trivial::info) << "Comm threads joined";
 
 		}
 		close(socketfd);
@@ -110,7 +115,7 @@ namespace comms {
 		int reply = 0;
 		char buff[255];
 #ifdef DEBUG
-				cout << "Receive thread started\n";
+		BOOST_LOG_SEV(my_logger::get(),logging::trivial::debug) << "Receive thread started";
 #endif
 		while(!terminate && !restart)
 		{
@@ -123,7 +128,7 @@ namespace comms {
 				recvQ.push(temp);
 				pthread_mutex_unlock(&recv_mut);
 #ifdef DEBUG
-				cout << "Msg added to recvQ\n";
+				BOOST_LOG_SEV(my_logger::get(),logging::trivial::debug) << "Msg added to recvQ";
 #endif
 			}
 			else if(reply==0 || reply==-1)
@@ -141,7 +146,7 @@ namespace comms {
 			}
 		}
 #ifdef DEBUG
-				cout << "Receive thread ending\n";
+		BOOST_LOG_SEV(my_logger::get(),logging::trivial::debug) << "Receive thread ending";
 #endif
 
 		return NULL;
@@ -166,27 +171,27 @@ namespace comms {
 
 				if (temp.length()>1023)
 				{
-					cout << "Transmit message too large\n";
+					BOOST_LOG_SEV(my_logger::get(),logging::trivial::error) << "Transmit message too large";
 					terminateComms();
 					return NULL;
 				}
 				strncpy(buff,temp.c_str(),1024);
 				buff[temp.length()] = '\0';
-				cout << "Message to be sent: " << buff << "\n";
+				//cout << "Message to be sent: " << buff << "\n";
 				reply = write(socketComm,(void*)buff,1024);
 				if (reply < 0)
 				{
-					cout << "Transmit error\n";
+					BOOST_LOG_SEV(my_logger::get(),logging::trivial::error) << "Transmit error";
 					restartComms();
 					return NULL;
 				}
 
 			}
-			cout << "Transmit thread sleep\n";
+			//cout << "Transmit thread sleep\n";
 			pthread_mutex_lock(&trans_mut);
 			while(0!=pthread_cond_wait(&trans_cond,&trans_mut));
 			pthread_mutex_unlock(&trans_mut);
-			cout << "Transmit thread awakes\n";
+			//cout << "Transmit thread awakes\n";
 		}
 
 		return NULL;
@@ -201,7 +206,7 @@ namespace comms {
 		transQ.push(in);
 		pthread_mutex_unlock(&trans_mut);
 		pthread_cond_signal(&comms::trans_cond);
-		cout << "Transmit msg pushed\n";
+		//cout << "Transmit msg pushed\n";
 		return 1;
 	}
 

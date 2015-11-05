@@ -59,8 +59,10 @@ int main(int argc, const char* argv[])
 	opt.initOptions();
 
 	initLogger();
+	cout << "Logger initiated\n";
 	timers::init();
 	comms::initComms(portno);
+	cout << "Comms initiated\n";
 
 	//TODO: spawn control thread
 	pthread_t ctrl;
