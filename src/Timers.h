@@ -17,11 +17,13 @@ namespace timers {
 	extern bool sendUpdate;
 	extern bool controllerPulse; //set at highest freq for the control loop
 	extern bool flowTimeout;
+	extern bool pumpStop;
 
 	void timerHanlder(int in);
 	void init();
 	int reset_delay30();
 	int reset_delay1();
+	int reset_pumpStop();
 	int reset_sendUpdate();
 	int reset_controllerPulse();
 	int reset_flowTimeout();

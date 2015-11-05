@@ -231,7 +231,7 @@ inline int Controller::loopIdle()
 	{
 		this->changeState(IDLE_PRES,false);
 	}
-	else if(!timers::delay1)
+	else if(!timers::pumpStop)
 	{
 		return true;
 	}
@@ -250,7 +250,7 @@ inline int Controller::loopIdlePres()
 	{
 		this->changeState(IDLE,false);
 	}
-	else if(!timers::delay1)
+	else if(!timers::pumpStop)
 	{
 		return true;
 	}
@@ -507,7 +507,7 @@ inline int Controller::initIdle()
 	success &= this->rig.closeOutflowValveOnly();
 	success &= this->rig.closeReleaseValveOnly();
 
-	timers::reset_delay1();	//Start 1 second delay
+	timers::reset_pumpStop();	//Start 1 second delay
 
 	if(!success)
 	{
@@ -528,7 +528,7 @@ inline int Controller::initIdlePres()
 	success &= this->rig.closeOutflowValveOnly();
 	success &= this->rig.closeReleaseValveOnly();
 
-	timers::reset_delay1();	//Start 1 second delay
+	//timers::reset_delay1();	//Start 1 second delay
 
 	if(!success)
 	{

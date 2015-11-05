@@ -14,19 +14,21 @@
 namespace timers {
 
 bool delay1 = false;	//used for 1second delay in states.
-int delay1_c = 1;
+int delay1_c = 0;
 
 bool delay30 = false; //30second delay
-int delay30_c =1;
+int delay30_c =0;
 
 bool sendUpdate = false;
-int sendUpdate_c = 1;
+int sendUpdate_c = 0;
 
 bool controllerPulse = false;
-int controllerPulse_c =1;
 
 bool flowTimeout = false;
 int flowTimeout_c = 1;
+
+bool pumpStop = false;
+int pumpStop_c = 0;
 
 void timerHanlder(int in)
 {
@@ -46,6 +48,14 @@ void timerHanlder(int in)
 		if(--delay30_c==0)
 		{
 			delay30 = true;
+		}
+	}
+
+	if(pumpStop_c>0)
+	{
+		if(--pumpStop_c==0)
+		{
+			pumpStop = true;
 		}
 	}
 
@@ -87,6 +97,14 @@ int reset_delay1()	//delay1 now 2 seconds long.
 	int old = delay1_c;
 	delay1_c = 2*FREQ;
 	delay1 = false;
+	return old;
+}
+
+int reset_pumpStop()	//Used to wait 5 seconds before checking if pumpRunning stopped.
+{
+	int old = pumpStop_c;
+	pumpStop_c = 5*FREQ;
+	pumpStop = false;
 	return old;
 }
 
