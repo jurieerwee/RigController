@@ -62,7 +62,7 @@ void FlowMeter::init()
 		}
 	}
 
-	FlowInst::dir = !(bool)(digitalRead(this->dirPin));
+	FlowInst::dir = (bool)(digitalRead(this->dirPin));
 }
 
 bool FlowMeter::getDir(void)
@@ -161,7 +161,7 @@ void FlowInst::flowInterrupt(void)
 
 void FlowInst::dirInterrupt(void)
 {
-	FlowInst::dir = !(bool)digitalRead(FlowInst::dirPin);
+	FlowInst::dir = (bool)digitalRead(FlowInst::dirPin);
 	//Reset flow measurement on direction change
 	FlowInst::firstPulse = true;
 	piLock(0);
