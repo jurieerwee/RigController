@@ -14,45 +14,56 @@
 namespace timers {
 
 bool delay1 = false;	//used for 1second delay in states.
-unsigned int delay1_c = 1;
+int delay1_c = 1;
 
 bool delay30 = false; //30second delay
-unsigned int delay30_c =1;
+int delay30_c =1;
 
 bool sendUpdate = false;
-unsigned int sendUpdate_c = 1;
+int sendUpdate_c = 1;
 
 bool controllerPulse = false;
-unsigned int controllerPulse_c =1;
+int controllerPulse_c =1;
 
 bool flowTimeout = false;
-unsigned int flowTimeout_c = 1;
+int flowTimeout_c = 1;
 
 void timerHanlder(int in)
 {
 	signal(SIGALRM,SIG_IGN);
-	if(--delay1_c==0)
+
+	if(delay1_c>0)
 	{
-		delay1_c = FREQ;
-		delay1 = true;
+		if(--delay1_c==0)
+		//if(--delay1_c==0)
+		{
+			delay1 = true;
+		}
 	}
 
-	if(--delay30_c==0)
+	if(delay30_c>0)
 	{
-		delay30_c = 30*FREQ;
-		delay30 = true;
+		if(--delay30_c==0)
+		{
+			delay30 = true;
+		}
 	}
 
+	//Repeats
 	if(--sendUpdate_c==0)
 	{
 		sendUpdate_c = (int)(0.5*FREQ);
 		sendUpdate = true;
 	}
 
-	if(--controllerPulse_c==0)
+	//ControllerPulse is set with every trigger of interrupt
+	controllerPulse = true;
+
+	//Repeats
+	if(--flowTimeout_c == 0)
 	{
-		controllerPulse_c = 1;
-		controllerPulse = true;
+		flowTimeout_c = 60*FREQ;
+		flowTimeout = true;
 	}
 	signal(SIGALRM,timerHanlder);
 }
