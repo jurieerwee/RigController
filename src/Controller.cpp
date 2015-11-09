@@ -69,6 +69,11 @@ int Controller::loop()
 	{
 		timers::controllerPulse = false;
 		this->rig.forceSensorUpdate();
+		if(this->dump)
+		{
+			this->dataDump();
+		}
+
 
 		//TODO: PI controller
 
@@ -811,4 +816,24 @@ int Controller::setDesiredPumpPerc(double in)
 	}
 }
 
+bool Controller::initDataDump()
+{
+	this->dataDumpFile.open("dataDump.csv");
+	this->dump = true;
+	this->dataDumpFile << "Pump Perc; Pressure; Flow rate; Release valve\n";
 
+	return true;
+}
+inline bool Controller::dataDump()
+{
+	this->dataDumpFile << to_string(this->rig.getPumpPerc()) << ";" << to_string(this->rig.getSensor_Pressure()) << ";" << to_string(this->rig.getFlowMeasure()) << ";"  << to_string(this->rig.getReleaseValve()) << "\n";
+
+	return true;
+}
+bool Controller::stopDataDump()
+{
+	this->dump = false;
+	this->dataDumpFile.close();
+
+	return true;
+}

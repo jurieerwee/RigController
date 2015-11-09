@@ -298,6 +298,14 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 		{
 			aswr = ctrl.rig.overridePressure();
 		}
+		else if(instruction.compare("activateDataDump")==0)
+		{
+			aswr = ctrl.initDataDump();
+		}
+		else if(instruction.compare("deactivateDataDump")==0)
+		{
+			aswr = ctrl.stopDataDump();
+		}
 		else
 		{
 			failed = true;

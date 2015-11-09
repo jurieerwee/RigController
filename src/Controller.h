@@ -14,6 +14,10 @@
 #include <boost/program_options/variables_map.hpp>
 #include <boost/log/trivial.hpp>
 
+#include <iostream>
+#include <fstream>
+
+using namespace std;
 
 namespace po = boost::program_options;
 namespace src = boost::log::sources;
@@ -50,6 +54,9 @@ private:
 	const int pressSettledCount;	//Number of samples that must consecutively be within pressSettledTolerance to be considered settled.
 	int pressSettledCounter = 0;
 
+	ofstream dataDumpFile;
+	bool dump = false;
+
 	int changeState(State newState, bool cmd);
 	int setDesiredPumpPerc(double in);
 
@@ -85,6 +92,10 @@ private:
 	inline 	TankState getTank();	//Translate two tank sensors to a state
 	inline bool isReverseFlow();
 	inline bool isForwardFlow();
+
+	bool initDataDump();
+	inline bool dataDump();
+	bool stopDataDump();
 };
 
 #endif /* SRC_CONTROLLER_H_ */
