@@ -73,6 +73,8 @@ bool Options::initOptions()
 			("emergencyBtnNO", po::value<bool>(),"Set to 0 if N.C. sensor, else 0")
 			("pressSettledTolerance",po::value<double>(),"Pressure tolerance whereby system considered as stable (PI controller)")
 			("pressSettledCount",po::value<int>(), "Number of consecutive samples that must be within threshold to be considered stable(PI controller")
+			("ki",po::value<double>(),"Intergral factor for pressure controller")
+			("kp",po::value<double>(),"Proportional factor for pressure controller")
 			;
 	ifstream ifs("config.cfg");
 	if(!ifs)

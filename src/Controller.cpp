@@ -25,7 +25,7 @@ namespace src = boost::log::sources;
 using namespace std;
 
 Controller::Controller(po::variables_map& vm_) : lg(my_logger::get()), rig((vm_)) , presThresh(vm_["pressureThreshold"].as<double>()), pressSettledTolerance(vm_["pressSettledTolerance"].as<double>()),\
-		pressSettledCount(vm_["pressSettledCount"].as<int>())
+		pressSettledCount(vm_["pressSettledCount"].as<int>()), kp(vm_["kp"].as<double>()),ki(vm_["ki"].as<double>())
 {
 	// TODO Auto-generated constructor stub
 	BOOST_LOG_SEV(this->lg,logging::trivial::info) << "Pressure threshold set to: " << this->presThresh ;
@@ -75,7 +75,10 @@ int Controller::loop()
 		}
 
 
-		//TODO: PI controller
+		if(this->state == PRESSURE_TRANS)
+		{
+			this->piControl();
+		}
 
 	}
 
@@ -697,6 +700,8 @@ inline int Controller::initPressureTrans()
 
 	this->pressSettledCounter = 0; //Reset
 
+	this->ui = this->setPercentage;
+
 	if(!success)
 	{
 		this->changeState(ERROR,false);
@@ -761,6 +766,38 @@ inline int Controller::initError()
 	return true;
 }
 
+inline bool Controller::piControl()
+{
+	double err = this->setPressure - this->rig.getSensor_Pressure();
+
+	this->ui += err * this->ki;
+
+	if(this->ui >1)
+		this->ui = 1;
+	else if(this->ui <0)
+			this->ui = 0;
+
+	double u = this->ui + this->kp * err;
+
+	if(u >1)
+		u = 1;
+	else if(u <0)
+		u = 0;
+
+	this->setPercentage = u;
+
+	if(err <-0.1)
+	{
+		this->rig.openReleaseValveOnly();
+	}
+
+	if(this->rig.getReleaseValve() && err>0)
+		this->rig.closeReleaseValveOnly();
+
+
+	return true;
+}
+
 inline bool Controller::isPressure()	//Check whether pressure is high enough
 {
 
@@ -821,6 +858,8 @@ bool Controller::initDataDump()
 	this->dataDumpFile.open("dataDump.csv");
 	this->dump = true;
 	this->dataDumpFile << "Pump Perc; Pressure; Flow rate; Release valve\n";
+
+	BOOST_LOG_SEV(this->lg,logging::trivial::info) << "Data dump initiated";
 
 	return true;
 }

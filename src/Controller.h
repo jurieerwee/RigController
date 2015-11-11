@@ -53,6 +53,9 @@ private:
 	const double pressSettledTolerance;	//Tolerance from desired pressure during pressure transient
 	const int pressSettledCount;	//Number of samples that must consecutively be within pressSettledTolerance to be considered settled.
 	int pressSettledCounter = 0;
+	const double ki;
+	const double kp;
+	double ui;
 
 	ofstream dataDumpFile;
 	bool dump = false;
@@ -87,6 +90,8 @@ private:
 	inline int loopPressureHold();
 	inline int loopOverride();
 	inline int loopError();
+
+	inline bool piControl();
 
 	inline bool isPressure();	//Check whether pressure is high enough
 	inline 	TankState getTank();	//Translate two tank sensors to a state
