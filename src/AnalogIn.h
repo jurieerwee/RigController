@@ -12,10 +12,14 @@
 #ifndef ANALOGIN_H_
 #define ANALOGIN_H_
 
+
+#include <deque>
+using namespace std;
+
 class AnalogIn
 {
 public:
-	AnalogIn(int adcID);
+	AnalogIn(int adcID, int window);
 	virtual ~AnalogIn();
 	int readChannel(int channel);
 	double readChannelScaled(int channel);
@@ -32,6 +36,9 @@ private:
 	double scale[4];	//The scale by which to adjust the 4 channels.
 	//Stored data when read,sothat it can be fetched without re-reading.  Enables synchronous reading.
 	int data[4] ={-1,-1,-1,-1};
+	deque<int> dataSet;
+	int dataSum =0;
+	const int windowLength;
 };
 
 #endif /* ANALOGIN_H_ */

@@ -8,7 +8,7 @@
 #include "AnalogIn.h"
 #include <wiringPiI2C.h>
 
-AnalogIn::AnalogIn(int adcID) : adc(wiringPiI2CSetup(adcID))
+AnalogIn::AnalogIn(int adcID, int window) : adc(wiringPiI2CSetup(adcID)), windowLength(window)
 {
 
 }
@@ -37,6 +37,16 @@ int AnalogIn::sampleChannel(int channel)
 	}
 
 	this->data[channel] =  ((value & 0x0FFF)>>2) & 0x03FF;
+	//Assuming only doing pressure!  Change this when adding other analog.
+	this->dataSet.push_front(this->data[channel]);
+	this->dataSum += this->data[channel];
+
+	if(this->windowLength < this->dataSet.size())
+	{
+		this->dataSum -= this->dataSet.back();
+		this->dataSet.pop_back();
+	}
+	this->data[channel] = this->dataSum / this->dataSet.size();
 
 	return true;
 }
