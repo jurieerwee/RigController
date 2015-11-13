@@ -25,7 +25,7 @@ namespace src = boost::log::sources;
 using namespace std;
 
 Controller::Controller(po::variables_map& vm_) : lg(my_logger::get()), rig((vm_)) , presThresh(vm_["pressureThreshold"].as<double>()), pressSettledTolerance(vm_["pressSettledTolerance"].as<double>()),\
-		pressSettledCount(vm_["pressSettledCount"].as<int>()), kp(vm_["kp"].as<double>()),ki(vm_["ki"].as<double>())
+		pressSettledCount(vm_["pressSettledCount"].as<int>()), kp(vm_["kp"].as<double>()),ki(vm_["ki"].as<double>()),h_on(vm_["h_on"].as<double>()),h_off(vm_["h_off"].as<double>())
 {
 	// TODO Auto-generated constructor stub
 	BOOST_LOG_SEV(this->lg,logging::trivial::info) << "Pressure threshold set to: " << this->presThresh ;
@@ -786,12 +786,12 @@ inline bool Controller::piControl()
 
 	this->setPercentage = u;
 
-	if(err <-0.1)
+	if(err <this->h_on)
 	{
 		this->rig.openReleaseValveOnly();
 	}
 
-	if(this->rig.getReleaseValve() && err>0)
+	if(this->rig.getReleaseValve() && err>this->h_off)
 		this->rig.closeReleaseValveOnly();
 
 
@@ -865,7 +865,7 @@ bool Controller::initDataDump()
 }
 inline bool Controller::dataDump()
 {
-	this->dataDumpFile << to_string(this->rig.getPumpPerc()) << ";" << to_string(this->rig.getSensor_Pressure()) << ";" << to_string(this->rig.getFlowMeasure()) << ";"  << to_string(this->rig.getReleaseValve()) << "\n";
+	this->dataDumpFile << to_string(this->rig.getPumpPerc()) << ";" << to_string(this->setPressure) << ";"<< to_string(this->rig.getSensor_Pressure()) << ";" << to_string(this->rig.getFlowMeasure()) << ";"  << to_string(this->rig.getReleaseValve()) << "\n";
 
 	return true;
 }

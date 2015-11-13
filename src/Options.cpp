@@ -75,6 +75,9 @@ bool Options::initOptions()
 			("pressSettledCount",po::value<int>(), "Number of consecutive samples that must be within threshold to be considered stable(PI controller")
 			("ki",po::value<double>(),"Intergral factor for pressure controller")
 			("kp",po::value<double>(),"Proportional factor for pressure controller")
+			("h_on",po::value<double>(),"Error threshold for releaseValve open")
+			("h_off",po::value<double>(),"Error threshold for releaseValve close")
+			("pressureWindow",po::value<int>(),"Pressure reading averaging window length")
 			;
 	ifstream ifs("config.cfg");
 	if(!ifs)

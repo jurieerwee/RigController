@@ -34,7 +34,7 @@ using namespace std;
 }*/
 
 Rig::Rig(po::variables_map &vm) :  lg(my_logger::get()), tankFullSensor(vm["tankFullPin"].as<int>(),true,true,vm["tankFullNO"].as<int>()), tankEmptySensor(vm["tankEmptyPin"].as<int>(),true,true,vm["tankEmptyNO"].as<int>()), pump(vm["pumpFullSpeed"].as<int>(),vm["dacID"].as<int>(),vm["startPin"].as<int>(),vm["runningPin"].as<int>(),vm["errStatusPin"].as<int>()),\
-		inflowValve(vm["inflowValvePin"].as<int>(),vm["inflowValveActv"].as<int>()), outflowValve(vm["outflowValvePin"].as<int>(),vm["outflowValveActv"].as<int>()), analogIn(vm["adcID"].as<int>()), pressureCh(vm["pressureCh"].as<int>()),\
+		inflowValve(vm["inflowValvePin"].as<int>(),vm["inflowValveActv"].as<int>()), outflowValve(vm["outflowValvePin"].as<int>(),vm["outflowValveActv"].as<int>()), analogIn(vm["adcID"].as<int>(),vm["pressureWindow"].as<int>()), pressureCh(vm["pressureCh"].as<int>()),\
 		flow1(vm["flow1Pin"].as<int>(),vm["flow1dirPin"].as<int>(), vm["flow1Pull"].as<bool>(), vm["flow1PullUp"].as<bool>(),vm["flow1Factor"].as<double>(),vm["flow1RunLength"].as<int>()),\
 		releaseValve(vm["releaseValvePin"].as<int>(),vm["releaseValveActv"].as<int>()), emerBtn(vm["emergencyBtnPin"].as<int>(), vm["emergencyBtnPull"].as<bool>(), vm["emergencyBtnPullUp"].as<bool>(), vm["emergencyBtnNO"].as<bool>())
 {

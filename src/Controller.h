@@ -55,6 +55,8 @@ private:
 	int pressSettledCounter = 0;
 	const double ki;
 	const double kp;
+	const double h_on;
+	const double h_off;
 	double ui;
 
 	ofstream dataDumpFile;
