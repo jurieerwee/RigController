@@ -29,6 +29,7 @@ namespace comms {
 	volatile bool restart;
 	volatile int socketfd;
 	volatile bool live =false;
+	volatile bool error =false;
 	queue<string> recvQ;
 	pthread_mutex_t recv_mut;
 	queue<string> transQ;
@@ -101,12 +102,24 @@ namespace comms {
 			shutdown(socketComm,SHUT_RDWR);	//Closing socket here ensures that thread exits read
 			close(socketComm);
 			pthread_join(receiver,NULL);
-
+			error = true;
 			BOOST_LOG_SEV(my_logger::get(),logging::trivial::info) << "Comm threads joined";
+
 
 		}
 		close(socketfd);
 		return NULL;
+	}
+
+	bool getError()
+	{
+		return error;
+	}
+
+	bool resetError()
+	{
+		error = false;
+		return true;
 	}
 
 	void* recv(void* socketComm_)

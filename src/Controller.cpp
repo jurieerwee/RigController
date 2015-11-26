@@ -66,6 +66,12 @@ int Controller::loop()
 		changeState(ERROR,false);
 	}
 
+	if(comms::getError())
+	{
+		changeState(ERROR,false);
+		comms::resetError();	//Acknowledges error and therefore resets it.
+	}
+
 	if(this->isPressure() && (bool)digitalRead(26))
 	{
 		digitalWrite(26,0);

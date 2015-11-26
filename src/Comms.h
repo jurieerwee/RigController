@@ -32,6 +32,8 @@ extern src::severity_logger_mt<>& lg;
 
 int initComms(int port);
 void *loop(void* socketfd_);
+bool getError();
+bool resetError();
 void* recv(void *socketComm_);
 void* trans(void *socketComm_);
 
