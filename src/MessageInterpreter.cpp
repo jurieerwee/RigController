@@ -172,7 +172,7 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 				aswr = ctrl.changeState(ctrl.State::IDLE,true);
 				break;
 			case terminateCMD:
-				if(ctrl.state == ctrl.State::IDLE || ctrl.state == ctrl.State::IDLE_PRES)
+				if(ctrl.state == ctrl.State::IDLE || ctrl.state == ctrl.State::IDLE_PRES || ctrl.state == ctrl.State::ERROR)
 				{
 					aswr = true;
 					terminate = true;
