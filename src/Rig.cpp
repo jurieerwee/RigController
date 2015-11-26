@@ -43,6 +43,7 @@ Rig::Rig(po::variables_map &vm) :  lg(my_logger::get()), tankFullSensor(vm["tank
 	BOOST_LOG_SEV(this->lg,logging::trivial::info) << "Pressure scale set to " << vm["pressureScale"].as<double>() << " and offset to " <<  vm["pressureOffset"].as<double>();
 	wiringPiSetup();	//Call it here, so that it is only called once
 	pinMode(21, OUTPUT);
+	pinMode(26, OUTPUT);
 
 	cout << "Full NO: " << vm["tankFullNO"].as<int>() << "Empty NO: " << vm["tankEmptyNO"].as<int>() << "\n";
 }

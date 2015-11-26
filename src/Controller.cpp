@@ -9,6 +9,7 @@
 #include "Rig.h"
 #include "Timers.h"
 #include "Comms.h"
+#include <wiringPi.h>
 //#include "MessageInterpreter.h"
 
 #include <string>
@@ -63,6 +64,15 @@ int Controller::loop()
 	if(this->rig.getEmerBtn())
 	{
 		changeState(ERROR,false);
+	}
+
+	if(this->isPressure() && (bool)digitalRead(26))
+	{
+		digitalWrite(26,0);
+	}
+	else if(!this->isPressure() && !(bool)digitalRead(26))
+	{
+		digitalWrite(26,1);
 	}
 
 	if(timers::controllerPulse)
