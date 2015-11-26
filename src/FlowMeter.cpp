@@ -157,6 +157,7 @@ void FlowInst::flowInterrupt(void)
 		piUnlock(0);
 		FlowInst::counter++;
 	}
+	digitalWrite(21,!(bool)digitalRead(21));
 }
 
 void FlowInst::dirInterrupt(void)
