@@ -20,6 +20,8 @@
 #include <boost/program_options/variables_map.hpp>
 #include <boost/log/trivial.hpp>
 
+
+
 namespace po = boost::program_options;
 namespace src = boost::log::sources;
 
@@ -472,9 +474,12 @@ inline int Controller::loopPressureTrans()
 		this->changeState(ERROR,false);
 		return false;
 	}
+	else if(this->pressSettledCounter>this->pressSettledCount)
+	{
+		this->changeState(PRESSURE_HOLD,false);
+	}
 
 	//TODO: PressureReached??
-	//TODO:  Closed loop control
 
 
 
@@ -809,6 +814,15 @@ inline bool Controller::piControl()
 
 	if(this->rig.getReleaseValve() && err>this->h_off)
 		this->rig.closeReleaseValveOnly();
+
+	if(!this->rig.getReleaseValve() && err<this->pressSettledTolerance && err>(-1*this->pressSettledTolerance) )
+	{
+		this->pressSettledCounter++;
+	}
+	else if(this->pressSettledCounter>0)
+	{
+		this->pressSettledCounter--;
+	}
 
 
 	return true;
