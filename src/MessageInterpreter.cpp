@@ -86,7 +86,7 @@ int MessageInterpreter::sendStatus(Controller *ctrlPtr)
 			+ ",\"pumpPercentage\":"+ to_string(ctrl.setPercentage) + "}";
 	msg += ",\"runningData\":{\"flowRate\":"+  to_string(ctrl.rig.getFlowMeasure()) + ",\"flowDir\":" + boolToString(ctrl.rig.getSensor_FlowDirection()) \
 			+ ",\"pressure\":" + to_string(ctrl.rig.getSensor_Pressure()) + "}";
-	msg += ",\"setData\":{\"flowRate\":" + to_string(ctrl.rig.getSetFlowMeasure())+",\"flowCounter\":"+ to_string(ctrl.rig.getFlowCounter()) + ", \"pressure\":" + to_string(ctrl.rig.getSensor_Pressure()) + "}}}\n";
+	msg += ",\"setData\":{\"flowRate\":" + to_string(ctrl.rig.getSetFlowMeasure())+",\"flowCounter\":"+ to_string(ctrl.rig.getFlowCounter()) + ", \"pressure\":" + to_string(ctrl.rig.getSensor_Pressure()) + ",\"pressureVar\":" + to_string(ctrl.rig.getSensor_PressureVar())+  "}}}\n";
 
 	comms::pushTransmit(msg);
 

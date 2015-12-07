@@ -67,6 +67,7 @@ public:
 	double getSetFlowMeasure();
 	int flowZeroPulse();
 	double getSensor_Pressure(); //Returns pressure transducer reading in standard measure.  TODO: Units to be confirmed
+	double getSensor_PressureVar();
 	bool forceSensorUpdate();
 	int getPumpSpeed();
 	double getPumpPerc();

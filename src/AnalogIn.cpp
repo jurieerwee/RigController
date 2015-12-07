@@ -40,13 +40,16 @@ int AnalogIn::sampleChannel(int channel)
 	//Assuming only doing pressure!  Change this when adding other analog.
 	this->dataSet.push_front(this->data[channel]);
 	this->dataSum += this->data[channel];
+	this->dataSumSqrd += (this->data[channel]*this->data[channel]);
 
 	if(this->windowLength < this->dataSet.size())
 	{
 		this->dataSum -= this->dataSet.back();
+		this->dataSumSqrd -= (this->dataSet.back()*this->dataSet.back());
 		this->dataSet.pop_back();
 	}
 	this->data[channel] = this->dataSum / this->dataSet.size();
+	this->dataVar[channel] = 1.0* this->dataSumSqrd / this->dataSet.size() - (this->data[channel]*this->data[channel]);
 
 	return true;
 }
@@ -54,6 +57,18 @@ int AnalogIn::sampleChannel(int channel)
 int AnalogIn::readChannel(int channel)
 {
 	return this->data[channel];
+}
+
+double AnalogIn::readChannelVar(int channel)
+{
+	return this->dataVar[channel];
+}
+
+double AnalogIn::readChannelVarScaled(int channel)
+{
+	int raw = this->readChannelVar(channel);
+
+	return raw==-1?-1: raw * this->scale[channel]* this->scale[channel];
 }
 
 double AnalogIn::readChannelScaled(int channel)	//Returns the scaled value read from the ADC.

@@ -22,6 +22,8 @@ public:
 	AnalogIn(int adcID, int window);
 	virtual ~AnalogIn();
 	int readChannel(int channel);
+	double readChannelVar(int channel);
+	double readChannelVarScaled(int channel);
 	double readChannelScaled(int channel);
 	bool activateChannel(int channel);
 	bool setup();
@@ -36,8 +38,10 @@ private:
 	double scale[4];	//The scale by which to adjust the 4 channels.
 	//Stored data when read,sothat it can be fetched without re-reading.  Enables synchronous reading.
 	int data[4] ={-1,-1,-1,-1};
+	double dataVar[4] = {-1,-1,-1,-1};
 	deque<int> dataSet;
 	int dataSum =0;
+	int dataSumSqrd = 0;
 	const int windowLength;
 };
 

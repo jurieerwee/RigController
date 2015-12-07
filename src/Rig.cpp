@@ -281,6 +281,14 @@ double Rig::getSensor_Pressure() //Returns pressure transducer reading in standa
 		return this->testerPressure;
 }
 
+double Rig::getSensor_PressureVar()
+{
+	if(!this->pressureOverride)
+		return this->analogIn.readChannelVarScaled(this->pressureCh);
+	else
+		return 0;
+}
+
 bool Rig::getEmerBtn()	//Returns emergency button's state.  Always does an update.
 {
 	this->emerBtn.update();
