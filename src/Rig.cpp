@@ -258,10 +258,11 @@ int Rig::getFlowCounter()		//Returns the pulse counter that gets reset by ResetF
 	return this->flow1.getCounter();
 }
 
-double Rig::getLastFlow(int n)	//Returns the flow average of last n pulses in liters/minute
+double Rig::getSetFlowMeasure() //Returns the average flow since reset.
 {
-	return this->flow1.getLastAve(n);
+	return this->flow1.getSetAve();
 }
+
 
 int Rig::flowZeroPulse()
 {

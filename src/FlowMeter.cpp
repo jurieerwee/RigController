@@ -21,6 +21,7 @@ unsigned int		FlowInst::length;	//The number of elements taken into running aver
 struct 	timespec FlowInst::flowTime;
 struct 	timespec FlowInst::flowTimePrev;
 int		FlowInst::counter =0;
+double	FlowInst::setSum =0;
 volatile bool FlowInst::dir;	//True = forward, false = backwards
 int		FlowInst::dirPin;
 bool FlowInst::firstPulse = true;  //Used to indicate that there is no previous pulse
@@ -83,22 +84,24 @@ double FlowMeter::getRunningAve(void)
 	return ave;
 }
 
-double FlowMeter::getLastAve(int count)	//Calculates average of last 'count' pulses
+double FlowMeter::getSetAve()	//Calculates average since reset.  Note:  Zero pulse not in effect for this average.
 {
-	double sum = 0;
+	double rate = 0;
+
+	if(FlowInst::counter<2)
+		return 0;
+
 	piLock(0);	//Ensures instRate doenst change while calculating
-	for(int i=0; i<count;i++)
-	{
-		sum+= FlowInst::instRate.at(i);
-	}
+	rate = FlowInst::setSum / (FlowInst::counter-1); //Minus one since first pulse was initiating trigger and not added.
 	piUnlock(0);
 
-	return sum / count * this->factor;
+	return rate * this->factor;
 }
 
 bool FlowMeter::clearCounter(void)
 {
 	FlowInst::counter = 0;
+	FlowInst::setSum = 0;
 	return true;
 }
 
@@ -149,13 +152,14 @@ void FlowInst::flowInterrupt(void)
 		piLock(0);
 		FlowInst::instRate.push_front(rate);
 		FlowInst::runningSum += rate;
+		FlowInst::setSum += FlowInst::counter>0?rate:0;
 		if(FlowInst::instRate.size() > FlowInst::length)
 		{
 			FlowInst::runningSum -= FlowInst::instRate.back();
 			FlowInst::instRate.pop_back();
 		}
-		piUnlock(0);
 		FlowInst::counter++;
+		piUnlock(0);
 	}
 	digitalWrite(21,!(bool)digitalRead(21));
 }

@@ -24,6 +24,7 @@ namespace FlowInst
 	extern struct 	timespec flowTime;
 	extern struct 	timespec flowTimePrev;
 	extern int		counter;
+	extern double	setSum;
 	extern volatile bool dir;	//True = forward, false = backwards
 	extern int dirPin;
 	extern bool firstPulse;
@@ -43,7 +44,7 @@ public:
 	double getRunningAve(void);
 	bool clearCounter(void);
 	int getCounter(void);
-	double getLastAve(int count);
+	double getSetAve();
 	int setLength(int _length);	//Returns current length
 	void zeroPulse();
 
