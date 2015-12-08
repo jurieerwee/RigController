@@ -13,15 +13,17 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/exception/all.hpp>
+#include <boost/log/trivial.hpp>
 
 #include "MessageInterpreter.h"
 #include "Controller.h"
 #include "Comms.h"
 #include "Timers.h"
+#include "Logging.h"
 
 
 using namespace std;
-
+namespace src = boost::log::sources;
 
 
 MessageInterpreter::MessageInterpreter() {
@@ -119,7 +121,11 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 	}catch(boost::exception &e)
 	{
 		if(msgNumber ==-1)
+		{
+			BOOST_LOG_SEV(my_logger::get(),logging::trivial::error) << "Corrupt JSON:" << in;
 			return -1;
+
+		}
 		else	//Message ID has been successfully been extracted
 			failed = true;
 	}
@@ -317,6 +323,11 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 	else
 	{
 		failed = true;
+	}
+
+	if(failed)
+	{
+		BOOST_LOG_SEV(my_logger::get(),logging::trivial::error) << "msg interpretation failed: " << in;
 	}
 
 	reply += "\"success\":" + to_string(!failed) + "}}\n";	//TODO: find a valid way to print TRUE/FALSE instread of 0 or 1
