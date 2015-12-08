@@ -65,11 +65,13 @@ int Controller::loop()
 
 	if(this->rig.getEmerBtn())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "Emergency btn pressed";
 		changeState(ERROR,false);
 	}
 
 	if(comms::getError())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "Comms error";
 		changeState(ERROR,false);
 		comms::resetError();	//Acknowledges error and therefore resets it.
 	}
@@ -151,6 +153,7 @@ int Controller::loop()
 		this->loopError();
 		break;
 	default:
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "Invalid state";
 		this->changeState(ERROR,false);
 		break;
 	}
@@ -263,6 +266,7 @@ inline int Controller::loopIdle()
 	}
 	else if(this->rig.getPumpRunning())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopIdle: pump running";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -282,6 +286,7 @@ inline int Controller::loopIdlePres()
 	}
 	else if(this->rig.getPumpRunning())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopIdlePres: pump running";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -293,6 +298,7 @@ inline int Controller::loopPrime1()
 {
 	if(this->getTank()==TANK_ERROR)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPrime1: tank error";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -302,6 +308,7 @@ inline int Controller::loopPrime1()
 	}
 	else if(!this->isReverseFlow())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPrime1: no reverse flow";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -318,11 +325,13 @@ inline int Controller::loopPrime2()
 {
 	if(this->getTank()==TANK_ERROR)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPrime2: tank error";
 		this->changeState(ERROR,false);
 		return false;
 	}
 	else if(!this->isReverseFlow())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPrime2: no reverse flow";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -342,11 +351,13 @@ inline int Controller::loopPrime3()
 {
 	if(this->getTank()==TANK_ERROR)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPrime3: tank error";
 		this->changeState(ERROR,false);
 		return false;
 	}
 	else if(!this->isReverseFlow())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPrime3: no reverse flow";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -370,11 +381,13 @@ inline int Controller::loopPrime4()
 {
 	if(this->getTank()==TANK_ERROR)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPrime4: tank error";
 		this->changeState(ERROR,false);
 		return false;
 	}
 	else if(!this->isReverseFlow())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPrime4: no reverse flow";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -389,6 +402,7 @@ inline int Controller::loopFill()
 {
 	if(this->getTank()==TANK_ERROR)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopFill: tank error";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -398,6 +412,7 @@ inline int Controller::loopFill()
 	}
 	else if(!this->isReverseFlow())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopFill: no reverse flow";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -418,16 +433,19 @@ inline int Controller::loopPumping()
 {
 	if(this->getTank()==TANK_ERROR)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPumping: tank error";
 		this->changeState(ERROR,false);
 		return false;
 	}
 	else if(this->rig.getPumpErrStatus())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPumping: pump error";
 		this->changeState(ERROR,false);
 		return false;
 	}
 	else if(this->getTank()==EMPTY)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::warning) << "loopPumping: tank empty";
 		this->changeState(IDLE,false);
 	}
 	else if(!timers::delay1)
@@ -436,11 +454,13 @@ inline int Controller::loopPumping()
 	}
 	else if(!this->rig.getPumpRunning())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) <<"loopPumping: pump not running";
 		this->changeState(ERROR,false);
 		return false;
 	}
 	else if(!this->isPressure() && !this->isForwardFlow())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPumping: no flow or pressure";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -452,25 +472,30 @@ inline int Controller::loopPressureTrans()
 {
 	if(this->getTank()==TANK_ERROR)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPressureTrans: tank error";
 		this->changeState(ERROR,false);
 		return false;
 	}
 	else if(this->rig.getPumpErrStatus())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPressureTrans: pump error";
 		this->changeState(ERROR,false);
 		return false;
 	}
 	else if(this->getTank()==EMPTY)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::warning) << "loopPressureTrans: tank empty";
 		this->changeState(IDLE,false);
 	}
 	else if(!this->rig.getPumpRunning())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) <<"loopPressureTrans: pump not running";
 		this->changeState(ERROR,false);
 		return false;
 	}
 	else if(!this->isPressure() && !this->isForwardFlow())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPressureTrans: no flow or pressure";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -490,25 +515,30 @@ inline int Controller::loopPressureHold()
 {
 	if(this->getTank()==TANK_ERROR)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPressureHold: tank error";
 		this->changeState(ERROR,false);
 		return false;
 	}
 	else if(this->rig.getPumpErrStatus())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPressureHold: pump error";
 		this->changeState(ERROR,false);
 		return false;
 	}
 	else if(this->getTank()==EMPTY)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::warning) << "loopPressureHold: tank empty";
 		this->changeState(IDLE,false);
 	}
 	else if(!this->rig.getPumpRunning())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) <<"loopPressureHold: pump not running";
 		this->changeState(ERROR,false);
 		return false;
 	}
 	else if(!this->isPressure() && !this->isForwardFlow())
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPressureHold: no flow or pressure";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -540,6 +570,7 @@ inline int Controller::initIdle()
 
 	if(!success)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "initIdle failed";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -561,6 +592,7 @@ inline int Controller::initIdlePres()
 
 	if(!success)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "initIdlePres failed";
 		this->changeState(ERROR,false);
 		return false;
 	}
@@ -583,6 +615,7 @@ inline int Controller::initPrime1()
 
 	if(!success)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "initPrime1 failed";
 		this->changeState(ERROR,false);
 		return false;	//Error on enter
 	}
@@ -604,6 +637,7 @@ inline int Controller::initPrime2()
 
 	if(!success)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "initPrime2 failed";
 		this->changeState(ERROR,false);
 		return false;	//Error on enter
 	}
@@ -623,6 +657,7 @@ inline int Controller::initPrime3()
 
 	if(!success)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "initPrime3 failed";
 		this->changeState(ERROR,false);
 		return false;	//Error on enter
 	}
@@ -642,6 +677,7 @@ inline int Controller::initPrime4()
 
 	if(!success)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "initPrime4 failed";
 		this->changeState(ERROR,false);
 		return false;	//Error on enter
 	}
@@ -663,6 +699,7 @@ inline int Controller::initFill()
 
 	if(!success)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "initFill failed";
 		this->changeState(ERROR,false);
 		return false;	//Error on enter
 	}
@@ -681,6 +718,7 @@ inline int Controller::initForceFill()
 
 	if(!success)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "initForceFill failed";
 		this->changeState(ERROR,false);
 		return false;	//Error on enter
 	}
@@ -702,6 +740,7 @@ inline int Controller::initPumping()
 
 	if(!success)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "initPumping failed";
 		this->changeState(ERROR,false);
 		return false;	//Error on enter
 	}
@@ -725,6 +764,7 @@ inline int Controller::initPressureTrans()
 
 	if(!success)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "initPressureTrans failed";
 		this->changeState(ERROR,false);
 		return false;	//Error on enter
 	}
@@ -744,6 +784,7 @@ inline int Controller::initPressureHold()
 
 	if(!success)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "initPressureHold failed";
 		this->changeState(ERROR,false);
 		return false;	//Error on enter
 	}
@@ -763,6 +804,7 @@ inline int Controller::initOverride()
 
 	if(!success)
 	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "initOverride failed";
 		this->changeState(ERROR,false);
 		return false;	//Error on enter
 	}
