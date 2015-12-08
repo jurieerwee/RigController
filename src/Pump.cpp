@@ -27,6 +27,10 @@ bool Pump::setSpeed(int speed)
 	if(speed>this->pumpFullSpeed)
 		return false;
 
+	if(speed == pumpSpeed)	//Dont re-set the speed
+		return true;
+
+
 	this->pumpSpeed = speed;
 
 	int data = speed;

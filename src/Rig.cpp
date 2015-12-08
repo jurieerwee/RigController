@@ -184,9 +184,16 @@ bool Rig::closeReleaseValveOnly()
 
 bool Rig::setPumpSpeed(double percentage) //Set pump speed as percentage of fullspeed
 {
-	this->pump.setSpeedPerc(percentage);
-	BOOST_LOG_SEV(this->lg,logging::trivial::info) << "Set pump speed to "<< percentage << " successful";
-	return true;
+	if(this->pump.setSpeedPerc(percentage))
+	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::info) << "Set pump speed to "<< percentage << " successful";
+		return true;
+	}
+	else
+	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::info) << "Set pump speed to "<< percentage << " unsuccessful";
+		return false;
+	}
 }
 
 
