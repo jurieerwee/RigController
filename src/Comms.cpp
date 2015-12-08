@@ -133,18 +133,45 @@ namespace comms {
 		while(!terminate && !restart)
 		{
 			memset(buff, 0, sizeof(buff));
+			stringstream ss;
+			//string temp;
+			string prev = "";
+
+
 			reply = read(socketComm,(void*)buff,254);
+
 			if(reply>0)
 			{
-				string temp(buff);
-				pthread_mutex_lock(&recv_mut);
-				recvQ.push(temp);
-				pthread_mutex_unlock(&recv_mut);
-#ifdef DEBUG
+				//string temp(buff);
+				ss << string(buff,reply);
+				fd_set readfds;
+				FD_SET(socketComm, &readfds);
+				struct timeval nonblock;
+				nonblock.tv_sec = 0;
+				nonblock.tv_usec = 0;
+				while(select((socketComm+1),&readfds,NULL,NULL,&nonblock)>0)
+				{
+					reply = read(socketComm,(void*)buff,254);
+					if(reply==0 || reply == -1)
+						break;
+
+					ss << string(buff,reply);
+				}
+				while(ss.getline(buff,254))
+				{
+					string temp(buff);
+					pthread_mutex_lock(&recv_mut);
+					recvQ.push(temp);
+					pthread_mutex_unlock(&recv_mut);
+				}
+
+
+	#ifdef DEBUG
 				BOOST_LOG_SEV(my_logger::get(),logging::trivial::debug) << "Msg added to recvQ";
-#endif
+	#endif
 			}
-			else if(reply==0 || reply==-1)
+
+			else if(reply==-1 || reply==0)
 			{
 				//if(errno != EAGAIN && errno != EWOULDBLOCK && errno != EINPROGRESS)
 				//{
@@ -157,6 +184,7 @@ namespace comms {
 				terminateComms();
 				return NULL;
 			}
+
 		}
 #ifdef DEBUG
 		BOOST_LOG_SEV(my_logger::get(),logging::trivial::debug) << "Receive thread ending";
