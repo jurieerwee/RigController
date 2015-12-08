@@ -476,16 +476,20 @@ inline int Controller::loopPressureTrans()
 		this->changeState(ERROR,false);
 		return false;
 	}
+	else if(this->getTank()==EMPTY)
+	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::warning) << "loopPressureTrans: tank empty";
+		this->changeState(IDLE,false);
+	}
+	else if(!timers::delay1)
+	{
+		return true;
+	}
 	else if(this->rig.getPumpErrStatus())
 	{
 		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopPressureTrans: pump error";
 		this->changeState(ERROR,false);
 		return false;
-	}
-	else if(this->getTank()==EMPTY)
-	{
-		BOOST_LOG_SEV(this->lg,logging::trivial::warning) << "loopPressureTrans: tank empty";
-		this->changeState(IDLE,false);
 	}
 	else if(!this->rig.getPumpRunning())
 	{
