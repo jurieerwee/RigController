@@ -853,7 +853,7 @@ inline bool Controller::piControl()
 
 	this->setPercentage = u;
 
-	if(err <this->h_on)
+	if(err <this->h_on && !this->rig.getReleaseValve())
 	{
 		this->rig.openReleaseValveOnly();
 	}
