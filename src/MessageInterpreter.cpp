@@ -39,6 +39,7 @@ MessageInterpreter::MessageInterpreter() {
 	instrState.insert(pair<string,stateCmd>("override",overrideCMD));
 	instrState.insert(pair<string,stateCmd>("disableOverride",disableOverrideCMD));
 	instrState.insert(pair<string,stateCmd>("terminate",terminateCMD));
+	instrState.insert(pair<string,stateCmd>("error",errorCMD));
 	//Munual commands
 	instrMan.insert(pair<string,manCmd>("startPump",startPumpCMD));
 	instrMan.insert(pair<string,manCmd>("stopPump",stopPumpCMD));
@@ -187,6 +188,9 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 				{
 					aswr = false;
 				}
+				break;
+			case errorCMD:
+				aswr = ctrl.changeState(ctrl.State::ERROR,true);
 				break;
 			default:
 				failed = true;

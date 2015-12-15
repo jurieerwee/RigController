@@ -26,7 +26,7 @@ public:
 
 private:
 	enum stateCmd {primeCMD,idleCMD,fillTankCMD,forceFillCMD,pumpCMD,\
-		newPressureCMD,releaseHoldCMD,clearErrCMD,overrideCMD,disableOverrideCMD, terminateCMD};
+		newPressureCMD,releaseHoldCMD,clearErrCMD,overrideCMD,disableOverrideCMD, terminateCMD, errorCMD};
 	map<string,stateCmd>	instrState;
 	enum manCmd {startPumpCMD,stopPumpCMD,openInflowValveCMD,\
 		closeInflowValveCMD,openOutflowValveCMD,closeOutflowValveCMD,openReleaseValveCMD,closeReleaseValveCMD};
