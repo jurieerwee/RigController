@@ -62,7 +62,7 @@ void timerHanlder(int in)
 	//Repeats
 	if(--sendUpdate_c==0)
 	{
-		sendUpdate_c = (int)(0.5*FREQ);
+		sendUpdate_c = (int)(1*FREQ);
 		sendUpdate = true;
 	}
 
@@ -111,7 +111,7 @@ int reset_pumpStop()	//Used to wait 5 seconds before checking if pumpRunning sto
 int reset_sendUpdate()
 {
 	int old = sendUpdate_c;
-	sendUpdate_c = (int)(0.5*FREQ);
+	sendUpdate_c = (int)(1*FREQ);
 	sendUpdate = false;
 	return old;
 }
