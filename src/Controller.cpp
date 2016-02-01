@@ -448,7 +448,7 @@ inline int Controller::loopPumping()
 		BOOST_LOG_SEV(this->lg,logging::trivial::warning) << "loopPumping: tank empty";
 		this->changeState(IDLE,false);
 	}
-	else if(!timers::delay1)
+	else if(!timers::pumpStop) //Changed to pumpStop timer to allow for longer waiting.
 	{
 		return true;
 	}
@@ -481,7 +481,7 @@ inline int Controller::loopPressureTrans()
 		BOOST_LOG_SEV(this->lg,logging::trivial::warning) << "loopPressureTrans: tank empty";
 		this->changeState(IDLE,false);
 	}
-	else if(!timers::delay1)
+	else if(!timers::pumpStop)//Changed to pumpStop, since pumping also uses it.
 	{
 		return true;
 	}
@@ -740,7 +740,8 @@ inline int Controller::initPumping()
 	success &= this->rig.openOutflowValveOnly();
 	success &= this->rig.closeReleaseValveOnly();
 
-	timers::reset_delay1();	//Start 1 second delay
+	//timers::reset_delay1();	//Start 1 second delay
+	timers::reset_pumpStop();
 
 	if(!success)
 	{
