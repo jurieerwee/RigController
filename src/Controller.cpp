@@ -28,7 +28,7 @@ namespace src = boost::log::sources;
 using namespace std;
 
 Controller::Controller(po::variables_map& vm_) : lg(my_logger::get()), rig((vm_)) , presThresh(vm_["pressureThreshold"].as<double>()), pressSettledTolerance(vm_["pressSettledTolerance"].as<double>()),\
-		pressSettledCount(vm_["pressSettledCount"].as<int>()), kp(vm_["kp"].as<double>()),ki(vm_["ki"].as<double>()),h_on(vm_["h_on"].as<double>()),h_off(vm_["h_off"].as<double>())
+		pressSettledCount(vm_["pressSettledCount"].as<int>()), kp(vm_["kp"].as<double>()),ki(vm_["ki"].as<double>()),h_on(vm_["h_on"].as<double>()),h_off(vm_["h_off"].as<double>()), maxFlow(vm_["maxFlow"].as<double>())
 {
 	// TODO Auto-generated constructor stub
 	BOOST_LOG_SEV(this->lg,logging::trivial::info) << "Pressure threshold set to: " << this->presThresh ;
@@ -66,6 +66,12 @@ int Controller::loop()
 	if(this->rig.getEmerBtn())
 	{
 		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "Emergency btn pressed";
+		changeState(ERROR,false);
+	}
+
+	if(this->isForwardFlow() && this->rig.getFlowMeasure()> this->maxFlow)
+	{
+		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "Maximum forward flow exceeded.";
 		changeState(ERROR,false);
 	}
 

@@ -58,6 +58,7 @@ private:
 	const double h_on;
 	const double h_off;
 	double ui;
+	const double maxFlow;
 
 	ofstream dataDumpFile;
 	bool dump = false;

@@ -78,6 +78,7 @@ bool Options::initOptions()
 			("h_on",po::value<double>(),"Error threshold for releaseValve open")
 			("h_off",po::value<double>(),"Error threshold for releaseValve close")
 			("pressureWindow",po::value<int>(),"Pressure reading averaging window length")
+			("maxFlow",po::value<double>(),"Maximum outflow of water before emergency triggered")
 			;
 	ifstream ifs("config.cfg");
 	if(!ifs)
