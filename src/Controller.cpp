@@ -940,7 +940,7 @@ bool Controller::initDataDump()
 {
 	this->dataDumpFile.open("dataDump.csv");
 	this->dump = true;
-	this->dataDumpFile << "Pump Perc; Set pressure Pressure; Flow rate; Release valve\n";
+	this->dataDumpFile << "Pump Perc; Set pressure; Pressure; Flow rate; Release valve\n";
 
 	BOOST_LOG_SEV(this->lg,logging::trivial::info) << "Data dump initiated";
 
