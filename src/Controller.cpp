@@ -270,6 +270,16 @@ inline int Controller::loopIdle()
 	{
 		return true;
 	}
+	else if(this->rig.getOutflowValve())
+	{
+		bool success = this->rig.closeOutflowValveOnly();
+		if(!success)
+		{
+			BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopIdle: Outflow valve not closing";
+			this->changeState(ERROR,false);
+			return false;
+		}
+	}
 	else if(this->rig.getPumpRunning())
 	{
 		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopIdle: pump running";
@@ -289,6 +299,16 @@ inline int Controller::loopIdlePres()
 	else if(!timers::pumpStop)
 	{
 		return true;
+	}
+	else if(this->rig.getOutflowValve())
+	{
+		bool success = this->rig.closeOutflowValveOnly();
+		if(!success)
+		{
+			BOOST_LOG_SEV(this->lg,logging::trivial::error) << "loopIdle: Outflow valve not closing";
+			this->changeState(ERROR,false);
+			return false;
+		}
 	}
 	else if(this->rig.getPumpRunning())
 	{
@@ -573,7 +593,6 @@ inline int Controller::initIdle()
 	bool success = true;
 	success &= this->rig.stopPumpOnly();
 	success &= this->rig.closeInflowValveOnly();
-	success &= this->rig.closeOutflowValveOnly();
 	success &= this->rig.closeReleaseValveOnly();
 
 	timers::reset_pumpStop();	//Start 1 second delay
@@ -595,7 +614,7 @@ inline int Controller::initIdlePres()
 	bool success = true;
 	success &= this->rig.stopPumpOnly();
 	success &= this->rig.closeInflowValveOnly();
-	success &= this->rig.closeOutflowValveOnly();
+	//success &= this->rig.closeOutflowValveOnly();
 	success &= this->rig.closeReleaseValveOnly();
 
 	//timers::reset_delay1();	//Start 1 second delay
