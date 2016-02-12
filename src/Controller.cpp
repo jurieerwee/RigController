@@ -69,11 +69,11 @@ int Controller::loop()
 		changeState(ERROR,false);
 	}
 
-	if(this->isForwardFlow() && this->rig.getFlowMeasure()> this->maxFlow)
+	/*if(this->isForwardFlow() && this->rig.getFlowMeasure()> this->maxFlow)
 	{
 		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "Maximum forward flow exceeded.";
 		changeState(ERROR,false);
-	}
+	}*/
 
 	if(comms::getError())
 	{
