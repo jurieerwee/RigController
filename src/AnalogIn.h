@@ -29,6 +29,9 @@ public:
 	bool setup();
 	bool setScale(int ch, double offset, double scale);
 	int sampleChannel(int channel);
+	double readSetChannel(int channel);
+	double readSetChannelScaled(int channel);
+	bool resetCounters(int channel);
 
 private:
 
@@ -39,7 +42,10 @@ private:
 	//Stored data when read,sothat it can be fetched without re-reading.  Enables synchronous reading.
 	int data[4] ={-1,-1,-1,-1};
 	double dataVar[4] = {-1,-1,-1,-1};
+	double setdata[4] = {-1,-1,-1,-1};
 	deque<int> dataSet;
+	int setdataSum = 0;		//For use with reset
+	int setdataCount = 0;	//For use with reset
 	int dataSum =0;
 	int dataSumSqrd = 0;
 	const int windowLength;

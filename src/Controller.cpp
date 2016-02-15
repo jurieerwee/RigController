@@ -95,6 +95,11 @@ int Controller::loop()
 	{
 		timers::controllerPulse = false;
 		this->rig.forceSensorUpdate();
+		if(this->rig.getFlowCounter()==0)
+		{
+			this->rig.resetPressureCounters(); //Reset pressure counters until first pulse arrived
+		}
+
 		if(this->dump)
 		{
 			this->dataDump();

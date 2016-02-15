@@ -41,6 +41,8 @@ int AnalogIn::sampleChannel(int channel)
 	this->dataSet.push_front(this->data[channel]);
 	this->dataSum += this->data[channel];
 	this->dataSumSqrd += (this->data[channel]*this->data[channel]);
+	this->setdataSum += this->data[channel];
+	this->setdataCount +=1;
 
 	if(this->windowLength < this->dataSet.size())
 	{
@@ -50,6 +52,7 @@ int AnalogIn::sampleChannel(int channel)
 	}
 	this->data[channel] = this->dataSum / this->dataSet.size();
 	this->dataVar[channel] = 1.0* this->dataSumSqrd / this->dataSet.size() - (this->data[channel]*this->data[channel]);
+	this->setdata[channel] = 1.0 * this->setdataSum / this->setdataCount;
 
 	return true;
 }
@@ -80,11 +83,29 @@ double AnalogIn::readChannelScaled(int channel)	//Returns the scaled value read 
 
 }
 
+double AnalogIn::readSetChannel(int channel)
+{
+	return this->setdata[channel];
+}
+
+double AnalogIn::readSetChannelScaled(int channel)
+{
+	return this->readSetChannel(channel)==-1 ? -1 : this->readSetChannel(channel)*this->scale[channel] + this->offset[channel];
+}
+
 bool AnalogIn::setScale(int ch, double _offset, double _scale)
 {
 	this->offset[ch] = _offset;
 	this->scale[ch] = _scale;
 
+	return true;
+}
+
+bool AnalogIn::resetCounters(int channel)
+{
+	this->setdataCount = 0;
+	this->setdataSum = 0;
+	this->setdata[channel] = 0;
 	return true;
 }
 

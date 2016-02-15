@@ -248,10 +248,24 @@ bool Rig::getSensor_FlowDirection() //True if forward(out) flow, false if revers
 	return this->flow1.getDir();
 }
 
-bool Rig::resetFlowMeasuring()
+/*bool Rig::resetFlowMeasuring()
 {
 	//TODO Refine
 	this->flow1.clearCounter();
+	return true;
+}
+*/
+bool Rig::resetPressureCounters()
+{
+	this->analogIn.resetCounters(this->pressureCh);
+	return true;
+}
+
+bool Rig::resetMeasurements()
+{
+	this->flow1.clearCounter();
+	this->analogIn.resetCounters(this->pressureCh);
+
 	return true;
 }
 
@@ -284,6 +298,14 @@ double Rig::getSensor_Pressure() //Returns pressure transducer reading in standa
 	//NBNB: Not that with current setup, this instruction will return the previous conversion and triggers the next.
 	if(!this->pressureOverride)	//Code added to allow for pressure override for testing purposes
 		return this->analogIn.readChannelScaled(this->pressureCh);
+	else
+		return this->testerPressure;
+}
+
+double Rig::getSensor_setPressure()
+{
+	if(!this->pressureOverride)	//Code added to allow for pressure override for testing purposes
+		return this->analogIn.readSetChannelScaled(this->pressureCh);
 	else
 		return this->testerPressure;
 }

@@ -62,11 +62,14 @@ public:
 	bool getSensor_FullTank();	//True if full, false if not full
 	bool getSensor_EmptyTank(); //True is empty, false if not empty
 	bool getSensor_FlowDirection(); //True if forward(out) flow, false if reverse flow
-	bool resetFlowMeasuring();
+	//bool resetFlowMeasuring();
+	bool resetPressureCounters();
+	bool resetMeasurements();
 	double getFlowMeasure();	//Returns the flow meter reading in liters
 	double getSetFlowMeasure();
 	int flowZeroPulse();
 	double getSensor_Pressure(); //Returns pressure transducer reading in standard measure.  TODO: Units to be confirmed
+	double getSensor_setPressure();
 	double getSensor_PressureVar();
 	bool forceSensorUpdate();
 	int getPumpSpeed();
@@ -75,6 +78,7 @@ public:
 	bool getPumpErrStatus();
 	int getFlowCounter();		//Returns the pulse counter that gets reset by ResetFlowMeasuring
 	bool getEmerBtn();	//True if emergency.
+
 
 	//Used for testing purposes only
 	bool overridePressure();

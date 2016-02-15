@@ -273,7 +273,7 @@ int MessageInterpreter::interpret(Controller *ctrlPtr)
 				ctrl.setPressure = pt.get<double>("msg.pressure");
 				break;
 			case resetCountersCMD:
-				aswr = ctrl.rig.resetFlowMeasuring();
+				aswr = ctrl.rig.resetMeasurements();
 				break;
 			case activateUpdateCMD:
 				this->sendActive = true;
