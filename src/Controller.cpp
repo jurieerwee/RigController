@@ -964,7 +964,7 @@ bool Controller::initDataDump()
 {
 	this->dataDumpFile.open("dataDump.csv");
 	this->dump = true;
-	this->dataDumpFile << "Pump Perc; Set pressure; Pressure; Flow rate; Release valve\n";
+	this->dataDumpFile << "State;Pump Perc; Set pressure; Pressure; Flow rate; Release valve\n";
 
 	BOOST_LOG_SEV(this->lg,logging::trivial::info) << "Data dump initiated";
 
@@ -972,7 +972,7 @@ bool Controller::initDataDump()
 }
 inline bool Controller::dataDump()
 {
-	this->dataDumpFile << to_string(this->rig.getPumpPerc()) << ";" << to_string(this->setPressure) << ";"<< to_string(this->rig.getSensor_Pressure()) << ";" << to_string(this->rig.getFlowMeasure()) << ";"  << to_string(this->rig.getReleaseValve()) << "\n";
+	this->dataDumpFile << this->stateString[this->state] << ";"<< to_string(this->rig.getPumpPerc()) << ";" << to_string(this->setPressure) << ";"<< to_string(this->rig.getSensor_Pressure()) << ";" << to_string(this->rig.getFlowMeasure()) << ";"  << to_string(this->rig.getReleaseValve()) << "\n";
 
 	return true;
 }
