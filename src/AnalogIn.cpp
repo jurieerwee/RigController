@@ -105,7 +105,7 @@ bool AnalogIn::resetCounters(int channel)
 {
 	this->setdataCount = 0;
 	this->setdataSum = 0;
-	this->setdata[channel] = 0;
+	this->setdata[channel] = -1;
 	return true;
 }
 
