@@ -321,7 +321,13 @@ double Rig::getSensor_PressureVar()
 bool Rig::getEmerBtn()	//Returns emergency button's state.  Always does an update.
 {
 	this->emerBtn.update();
-	return this->emerBtn.getState();
+	this->emerCounter += this->emerBtn.getState();
+	if (this->emerCounter>10)		//Cap upper at 10
+		this->emerCounter = 10;
+	if(this->emerCounter<0)			//Cap lower at 0
+			this->emerCounter = 0;
+
+	return this->emerCounter >5;
 }
 
 //Sets new full speed rpm and returns old full speed

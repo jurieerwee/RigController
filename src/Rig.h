@@ -102,6 +102,7 @@ private:
 	FlowMeter	flow1;
 	LogicOut	releaseValve;
 	LogicSensor emerBtn;	//Emergency button
+	int			emerCounter = 0;
 
 	//Used for testing purposes only
 	double testerPressure =0;

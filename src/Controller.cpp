@@ -63,7 +63,7 @@ int Controller::loop()
 {
 	//Note: Interpret called in ctrlTread loop.  This avoids circular dependence.
 
-	if(this->rig.getEmerBtn())
+	if(this->rig.getEmerBtn() && this->state != ERROR)
 	{
 		BOOST_LOG_SEV(this->lg,logging::trivial::error) << "Emergency btn pressed";
 		changeState(ERROR,false);
